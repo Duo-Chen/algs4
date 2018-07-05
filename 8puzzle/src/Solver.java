@@ -1,26 +1,80 @@
-import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.*;
 
 public class Solver {
-    public Solver(Board initial) {
+    private final boolean solvable;
+    private final Queue<Board> solution;
 
+    private class Node implements Comparable<Node> {
+        private final Node prev;
+        private final Board board;
+        private final int move;
+
+        public Node(Node prev, Board board, int move) {
+            this.prev = prev;
+            this.board = board;
+            this.move = move;
+        }
+
+        public int compareTo(Node that) {
+            if (this == that)
+                return 0;
+            if (this.move > that.move)
+                return 1;
+            if (this.move < that.move)
+                return -1;
+            if (this.board.manhattan() < that.board.manhattan())
+                return -1;
+            if (this.board.manhattan() > that.board.manhattan())
+                return 1;
+
+            return 0;
+        }
+    }
+
+    public Solver(Board initial) {
+        solvable = (initial.hamming() > 0 || initial.manhattan() > 0);
+        solution = new Queue<>();
+
+        if (!solvable)
+            return;
+
+        MinPQ<Node> pq = new MinPQ<>();
+        pq.insert(new Node(null, initial, 0));
+
+        while (true) {
+            Node node = pq.delMin();
+            if (node.board.isGoal()) {
+                while (node != null) {
+                    solution.enqueue(node.board);
+                    node = node.prev;
+                }
+                break;
+            }
+
+            for (Board board : node.board.neighbors()) {
+                pq.insert(new Node(node, board, node.move + 1));
+            }
+        }
     }
 
     public boolean isSolvable() {
-        return false;
+        return solvable;
     }
 
     public int moves() {
+        if (solvable)
+            return solution.size() - 1;
+
         return 0;
     }
 
     public Iterable<Board> solution() {
-        return null;
+        return solution;
     }
 
     public static void main(String[] args) {
         // create initial board from file
-        In in = new In(args[0]);
+        In in = new In("puzzle/puzzle07.txt");
         int n = in.readInt();
         int[][] blocks = new int[n][n];
         for (int i = 0; i < n; i++)

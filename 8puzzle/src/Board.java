@@ -1,6 +1,7 @@
 import edu.princeton.cs.algs4.BinarySearch;
 import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.StdRandom;
 
 import java.util.Arrays;
 
@@ -66,7 +67,24 @@ public class Board {
     }
 
     public Board twin() {
-        return null;
+        int p, q;
+        while (true) {
+            p = StdRandom.uniform(data.length);
+            q = StdRandom.uniform(data.length);
+
+            if (p != q && data[p] != 0 && data[q] != 0)
+                break;
+        }
+
+        int[][] blocks = new int[n][n];
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+                blocks[i][j] = data[i * n + j];
+
+        int t = blocks[p / n][p % n];
+        blocks[p / n][p % n] = blocks[q / n][q % n];
+        blocks[q / n][q % n] = t;
+        return new Board(blocks);
     }
 
     public boolean equals(Object y) {
@@ -75,12 +93,13 @@ public class Board {
 
         if (y == this)
             return true;
-
         if (y.getClass() != this.getClass())
             return false;
 
         Board other = (Board) y;
-        if (other.data.length != data.length)
+        if (other.data.length != data.length
+            || other.numHamming != this.numHamming
+            || other.numManhattan != this.numManhattan)
             return false;
 
         for (int i = 0; i < data.length; i++)
@@ -91,7 +110,14 @@ public class Board {
     }
 
     public Iterable<Board> neighbors() {
-        int index = BinarySearch.indexOf(data, 0);
+        int index = -1;
+        for (int i = 0; i < data.length; i++) {
+            if (data[i] == 0) {
+                index = i;
+                break;
+            }
+        }
+
         int r = index / n;
         int c = index % n;
         Stack<Board> boards = new Stack<>();
@@ -132,7 +158,7 @@ public class Board {
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++)
-                s += " " + data[i * n + j];
+                s += String.format(" %2d", data[i * n + j]);
 
             s += "\n";
         }
