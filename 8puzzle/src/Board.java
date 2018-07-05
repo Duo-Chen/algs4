@@ -9,6 +9,7 @@ public class Board {
     private final int n;
     private final int numHamming;
     private final int numManhattan;
+    private final int[][] twinBlock;
 
     public Board(int[][] blocks) {
         if (blocks == null)
@@ -47,6 +48,20 @@ public class Board {
 
         numHamming = h;
         numManhattan = m;
+
+        int p, q;
+        while (true) {
+            p = StdRandom.uniform(data.length);
+            q = StdRandom.uniform(data.length);
+
+            if (p != q && data[p] != 0 && data[q] != 0)
+                break;
+        }
+
+        twinBlock = blocks.clone();
+        int t = twinBlock[p / n][p % n];
+        twinBlock[p / n][p % n] = twinBlock[q / n][q % n];
+        twinBlock[q / n][q % n] = t;
     }
 
     public int dimension() {
@@ -66,24 +81,7 @@ public class Board {
     }
 
     public Board twin() {
-        int p, q;
-        while (true) {
-            p = StdRandom.uniform(data.length);
-            q = StdRandom.uniform(data.length);
-
-            if (p != q && data[p] != 0 && data[q] != 0)
-                break;
-        }
-
-        int[][] blocks = new int[n][n];
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < n; j++)
-                blocks[i][j] = data[i * n + j];
-
-        int t = blocks[p / n][p % n];
-        blocks[p / n][p % n] = blocks[q / n][q % n];
-        blocks[q / n][q % n] = t;
-        return new Board(blocks);
+        return new Board(twinBlock);
     }
 
     public boolean equals(Object y) {
@@ -96,16 +94,15 @@ public class Board {
             return false;
 
         Board other = (Board) y;
-        if (other.data.length != data.length
-            || other.numHamming != this.numHamming
-            || other.numManhattan != this.numManhattan)
+        if (other.data.length != data.length)
             return false;
 
+        Stack diff = new Stack();
         for (int i = 0; i < data.length; i++)
             if (other.data[i] != data[i])
-                return false;
+                diff.push(i);
 
-        return true;
+        return diff.size() < 3;
     }
 
     public Iterable<Board> neighbors() {
@@ -180,7 +177,8 @@ public class Board {
         StdOut.println("Hamming : " + b.hamming());
         StdOut.println("Manhattan : " + b.manhattan());
         StdOut.println("Is goal : " + b.isGoal());
-        StdOut.println("twin : " + b.twin());
+        StdOut.println("twin : " + b.twin().equals(b));
+        StdOut.println(b.twin());
 
         int i = 1;
         for (Board bb :b.neighbors()) {
