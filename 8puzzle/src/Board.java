@@ -1,6 +1,5 @@
 import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.StdOut;
-import edu.princeton.cs.algs4.StdRandom;
 
 import java.util.Arrays;
 
@@ -9,7 +8,6 @@ public class Board {
     private final int n;
     private final int numHamming;
     private final int numManhattan;
-    private final int[][] twinBlock;
 
     public Board(int[][] blocks) {
         if (blocks == null)
@@ -48,20 +46,6 @@ public class Board {
 
         numHamming = h;
         numManhattan = m;
-
-        int p, q;
-        while (true) {
-            p = StdRandom.uniform(data.length);
-            q = StdRandom.uniform(data.length);
-
-            if (p != q && data[p] != 0 && data[q] != 0)
-                break;
-        }
-
-        twinBlock = blocks.clone();
-        int t = twinBlock[p / n][p % n];
-        twinBlock[p / n][p % n] = twinBlock[q / n][q % n];
-        twinBlock[q / n][q % n] = t;
     }
 
     public int dimension() {
@@ -81,7 +65,10 @@ public class Board {
     }
 
     public Board twin() {
-        return new Board(twinBlock);
+        if (data[0] != 0 && data[1] != 0)
+            return createNeighbor(0, 1);
+
+        return createNeighbor(n * n - 2, n * n - 1);
     }
 
     public boolean equals(Object y) {
@@ -93,16 +80,11 @@ public class Board {
         if (y.getClass() != this.getClass())
             return false;
 
-        Board other = (Board) y;
-        if (other.data.length != data.length)
+        Board that = (Board) y;
+        if (that.data.length != data.length)
             return false;
 
-        Stack diff = new Stack();
-        for (int i = 0; i < data.length; i++)
-            if (other.data[i] != data[i])
-                diff.push(i);
-
-        return diff.size() < 3;
+        return Arrays.equals(this.data, that.data);
     }
 
     public Iterable<Board> neighbors() {
@@ -165,9 +147,9 @@ public class Board {
 
     public static void main(String[] args) {
         int[][] a = {
-                {8, 1, 3},
-                {4, 0, 2},
-                {7, 6, 5}
+                {4, 2, 7},
+                {3, 0, 1},
+                {5, 6, 8}
         };
 
         Board b = new Board(a);
