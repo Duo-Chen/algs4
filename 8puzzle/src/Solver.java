@@ -1,4 +1,7 @@
-import edu.princeton.cs.algs4.*;
+import edu.princeton.cs.algs4.Queue;
+import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.MinPQ;
+import edu.princeton.cs.algs4.In;
 
 public class Solver {
     private final boolean solvable;
@@ -52,7 +55,8 @@ public class Solver {
             }
 
             for (Board board : node.board.neighbors()) {
-                pq.insert(new Node(node, board, node.move + 1));
+                if (node.prev == null || !board.equals(node.prev.board))
+                    pq.insert(new Node(node, board, node.move + 1));
             }
         }
     }

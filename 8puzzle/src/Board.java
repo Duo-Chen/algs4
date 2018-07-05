@@ -1,4 +1,3 @@
-import edu.princeton.cs.algs4.BinarySearch;
 import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdRandom;
@@ -28,7 +27,7 @@ public class Board {
 
         int[] check = data.clone();
         Arrays.sort(check);
-        for (int i = 0; i <check.length; i++)
+        for (int i = 0; i < check.length; i++)
             if (check[i] != i)
                 throw new IllegalArgumentException("Invalid input");
 
@@ -154,16 +153,17 @@ public class Board {
     }
 
     public String toString() {
-        String s = new String(String.valueOf(n) + "\n");
+        StringBuilder s = new StringBuilder();
+        s.append(n + "\n");
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++)
-                s += String.format(" %2d", data[i * n + j]);
+                s.append(String.format(" %2d", data[i * n + j]));
 
-            s += "\n";
+            s.append("\n");
         }
 
-        return s;
+        return s.toString();
     }
 
     public static void main(String[] args) {
