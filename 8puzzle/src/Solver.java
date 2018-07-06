@@ -10,13 +10,15 @@ public class Solver {
         private final Board board;
         private final int move;
         private final int priority;
+        private final int priority2;
         private final boolean isTwin;
 
         public Node(Node prev, Board board, int move, boolean isTwin) {
             this.prev = prev;
             this.board = board;
             this.move = move;
-            this.priority = move + board.manhattan();
+            this.priority2 = board.manhattan();
+            this.priority = move + priority2;
             this.isTwin = isTwin;
         }
 
@@ -27,7 +29,7 @@ public class Solver {
                 return 1;
             if (this.priority < that.priority)
                 return -1;
-            return Integer.compare(this.board.manhattan(), that.board.manhattan());
+            return Integer.compare(this.priority2, that.priority2);
         }
     }
 
