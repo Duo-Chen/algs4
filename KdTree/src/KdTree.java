@@ -1,10 +1,13 @@
 import edu.princeton.cs.algs4.Point2D;
-        import edu.princeton.cs.algs4.RectHV;
-        import edu.princeton.cs.algs4.Stack;
+import edu.princeton.cs.algs4.RectHV;
+import edu.princeton.cs.algs4.Stack;
 
 public class KdTree {
+    private Node root;
+    private int count;
+
     private static class Node {
-        private Point2D p;      // the point
+        private final Point2D p;      // the point
         private RectHV rect;    // the axis-aligned rectangle corresponding to this node
         private Node lb;        // the left/bottom subtree
         private Node rt;        // the right/top subtree
@@ -20,9 +23,6 @@ public class KdTree {
             }
         }
     }
-
-    private Node root;
-    private int count;
 
     public KdTree() {
         root = null;
@@ -40,6 +40,9 @@ public class KdTree {
     public void insert(Point2D p) {
         if (p == null)
             throw new IllegalArgumentException("insert p shouldn't be null.");
+
+        if (contains(p))
+            return;
 
         if (root == null) {
             root = new Node(p, true, new RectHV(0.0, 0.0, 1.0, 1.0));
@@ -103,9 +106,6 @@ public class KdTree {
 
         Stack<Point2D> points = new Stack<>();
         range(points, rect, root);
-        if (points.size() == 0)
-            return null;
-
         return points;
     }
 
@@ -124,27 +124,25 @@ public class KdTree {
         if (p == null)
             throw new IllegalArgumentException("nearest p shouldn't be null.");
 
-        Double distance = Double.MAX_VALUE;
-        Point2D q = null;
-        nearest(root, p, q, distance);
-        return q;
+        return nearest(root, p, null, Double.POSITIVE_INFINITY);
     }
 
-    private void nearest(Node node, Point2D p, Point2D q, Double distance) {
+    private Point2D nearest(Node node, Point2D p, Point2D q, double distance) {
         if (node == null)
-            return;
+            return q;
 
-        Double d = node.p.distanceTo(p);
+        double d = node.p.distanceSquaredTo(p);
         if (Double.compare(d, distance) < 0) {
             q = node.p;
             distance = d;
         }
 
-        nearest(node.rt, p, q, distance);
-        nearest(node.lb, p, q, distance);
+        q = nearest(node.rt, p, q, distance);
+        q = nearest(node.lb, p, q, distance);
+        return q;
     }
 
     public static void main(String[] args) {
-
+        // for test
     }
 }
