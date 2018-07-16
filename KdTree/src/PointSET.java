@@ -1,15 +1,13 @@
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
-import edu.princeton.cs.algs4.RedBlackBST;
 import edu.princeton.cs.algs4.Stack;
+import edu.princeton.cs.algs4.SET;
 
 public class PointSET {
-    private Integer index;
-    private RedBlackBST<Point2D, Integer> sets;
+    private final SET<Point2D> sets;
 
     public PointSET() {
-        index = 0;
-        sets = new RedBlackBST<>();
+        sets = new SET<>();
     }
 
     public boolean isEmpty() {
@@ -24,7 +22,8 @@ public class PointSET {
         if (p == null)
             throw new IllegalArgumentException("insert p shouldn't be null.");
 
-        sets.put(p, index++);
+        if (!contains(p))
+            sets.add(p);
     }
 
     public boolean contains(Point2D p) {
@@ -35,7 +34,7 @@ public class PointSET {
     }
 
     public void draw() {
-        for (Point2D p : sets.keys()) {
+        for (Point2D p : sets) {
             p.draw();
         }
     }
@@ -45,13 +44,10 @@ public class PointSET {
             throw new IllegalArgumentException("RectHV shouldn't be null.");
 
         Stack<Point2D> stack = new Stack<>();
-        for (Point2D p : sets.keys()) {
+        for (Point2D p : sets) {
             if (rect.contains(p))
                 stack.push(p);
         }
-
-        if (stack.size() == 0)
-            return null;
 
         return stack;
     }
@@ -60,10 +56,10 @@ public class PointSET {
         if (p == null)
             throw new IllegalArgumentException("nearest p shouldn't be null.");
 
-        Double distance = Double.MAX_VALUE;
+        double distance = Double.POSITIVE_INFINITY;
         Point2D q = null;
-        for (Point2D t : sets.keys()) {
-            Double d = t.distanceTo(p);
+        for (Point2D t : sets) {
+            double d = t.distanceSquaredTo(p);
             if (Double.compare(d, distance) < 0) {
                 distance = d;
                 q = t;
@@ -74,6 +70,6 @@ public class PointSET {
     }
 
     public static void main(String[] args) {
-
+        // for test
     }
 }
