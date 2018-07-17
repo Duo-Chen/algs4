@@ -1,6 +1,7 @@
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.Stack;
+import edu.princeton.cs.algs4.StdOut;
 
 public class KdTree {
     private Node root;
@@ -8,19 +9,15 @@ public class KdTree {
 
     private static class Node {
         private final Point2D p;      // the point
-        private RectHV rect;    // the axis-aligned rectangle corresponding to this node
+        private final RectHV rect;    // the axis-aligned rectangle corresponding to this node
         private Node lb;        // the left/bottom subtree
         private Node rt;        // the right/top subtree
 
-        private Node(Point2D p, boolean isVertical, RectHV rect) {
+        private Node(Point2D p, RectHV rect) {
             this.p = p;
             lb = null;
             rt = null;
-            if (isVertical) {
-                this.rect = new RectHV(rect.xmin(), rect.ymin(), p.x(), rect.ymax());
-            } else {
-                this.rect = new RectHV(rect.xmin(), rect.ymin(), rect.xmax(), p.y());
-            }
+            this.rect = rect;
         }
     }
 
@@ -45,22 +42,39 @@ public class KdTree {
             return;
 
         if (root == null) {
-            root = new Node(p, true, new RectHV(0.0, 0.0, 1.0, 1.0));
+            root = new Node(p, new RectHV(0.0, 0.0, 1.0, 1.0));
         } else {
-            put(root, p, false);
+            put(root, p, true);
         }
         count++;
     }
 
     private void put(Node node, Point2D p, boolean isVertical) {
-        if (node.rect.contains(p)) {
+        RectHV rectLB;
+        RectHV rectRT;
+        double px = node.p.x();
+        double py = node.p.y();
+        double left = node.rect.xmin();
+        double right = node.rect.xmax();
+        double bottom = node.rect.ymin();
+        double top = node.rect.ymax();
+        if (isVertical) {
+            rectLB = new RectHV(left, bottom, px, top);
+            rectRT = new RectHV(px, bottom, right, top);
+        } else {
+            rectLB = new RectHV(left, bottom, right, py);
+            rectRT = new RectHV(left, py, right, top);
+        }
+
+        if ((isVertical && Double.compare(p.x(), px) < 0)
+            || (!isVertical && Double.compare(p.y(), py) < 0)) {
             if (node.lb == null)
-                node.lb = new Node(p, isVertical, node.rect);
+                node.lb = new Node(p, rectLB);
             else
                 put(node.lb, p, !isVertical);
         } else {
             if (node.rt == null)
-                node.rt = new Node(p, isVertical, node.rect);
+                node.rt = new Node(p, rectRT);
             else
                 put(node.rt, p, !isVertical);
         }
@@ -77,13 +91,13 @@ public class KdTree {
         if (node == null)
             return false;
 
-        int res = node.p.compareTo(p);
-        if (res == 0)
+        if (node.p.compareTo(p) == 0)
             return true;
-        else if (node.rect.contains(p))
-            return find(node.lb, p);
-        else
-            return find(node.rt, p);
+        
+        if (!node.rect.contains(p))
+            return false;
+
+        return find(node.lb, p) || find(node.rt, p);
     }
 
     public void draw() {
@@ -105,44 +119,76 @@ public class KdTree {
             throw new IllegalArgumentException("RectHV shouldn't be null.");
 
         Stack<Point2D> points = new Stack<>();
-        range(points, rect, root);
+        range(points, rect, root, true);
         return points;
     }
 
-    private void range(Stack<Point2D> points, RectHV rect, Node p) {
+    private void range(Stack<Point2D> points, RectHV rect, Node p, boolean isVertical) {
         if (p == null || points == null)
             return;
 
         if (rect.contains(p.p))
             points.push(p.p);
 
-        range(points, rect, p.lb);
-        range(points, rect, p.rt);
+        RectHV rectLB;
+        RectHV rectRT;
+        if (isVertical) {
+            rectLB = new RectHV(p.rect.xmin(), p.rect.ymin(), p.p.x(), p.rect.ymax());
+            rectRT = new RectHV(p.p.x(), p.rect.ymin(), p.rect.xmax(), p.rect.ymax());
+        } else {
+            rectLB = new RectHV(p.rect.xmin(), p.rect.ymin(), p.rect.xmax(), p.p.y());
+            rectRT = new RectHV(p.rect.xmin(), p.p.y(), p.rect.xmax(), p.rect.ymax());
+        }
+
+        if (rectLB.intersects(rect))
+            range(points, rect, p.lb, !isVertical);
+        if (rectRT.intersects(rect))
+            range(points, rect, p.rt, !isVertical);
     }
 
     public Point2D nearest(Point2D p) {
         if (p == null)
             throw new IllegalArgumentException("nearest p shouldn't be null.");
 
-        return nearest(root, p, null, Double.POSITIVE_INFINITY);
+        return nearest(root, p, null);
     }
 
-    private Point2D nearest(Node node, Point2D p, Point2D q, double distance) {
+    private Point2D nearest(Node node, Point2D p, Point2D q) {
         if (node == null)
             return q;
 
-        double d = node.p.distanceSquaredTo(p);
-        if (Double.compare(d, distance) < 0) {
-            q = node.p;
-            distance = d;
-        }
+        double distance = Double.POSITIVE_INFINITY;
+        if (q != null)
+            distance = p.distanceSquaredTo(q);
 
-        q = nearest(node.rt, p, q, distance);
-        q = nearest(node.lb, p, q, distance);
+        double d = node.p.distanceSquaredTo(p);
+        if (Double.compare(d, distance) < 0)
+            q = node.p;
+
+        q = nearest(node.rt, p, q);
+        q = nearest(node.lb, p, q);
         return q;
     }
 
     public static void main(String[] args) {
         // for test
+        Point2D[] points = {
+            new Point2D(0.372, 0.497),
+            new Point2D(0.564, 0.413),
+            new Point2D(0.226, 0.577),
+            new Point2D(0.144, 0.179),
+            new Point2D(0.083, 0.51),
+            new Point2D(0.32, 0.708),
+            new Point2D(0.471, 0.362),
+            new Point2D(0.862, 0.825),
+            new Point2D(0.785, 0.725),
+            new Point2D(0.499, 0.208),
+        };
+
+        KdTree kt = new KdTree();
+        for (int i = 0; i < points.length; i++)
+            kt.insert(points[i]);
+
+        StdOut.println(kt.nearest(new Point2D(0.428, 0.056)));
     }
 }

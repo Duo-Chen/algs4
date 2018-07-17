@@ -22,8 +22,8 @@
       <file leaf-file-name="KdTree.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/KdTree.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-528">
-              <caret line="11" column="23" selection-start-line="11" selection-start-column="23" selection-end-line="11" selection-end-column="23" />
+            <state relative-caret-position="66">
+              <caret line="95" column="8" selection-start-line="95" selection-start-column="8" selection-end-line="95" selection-end-column="8" />
             </state>
           </provider>
         </entry>
@@ -46,16 +46,18 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="439" />
-    <option name="y" value="28" />
-    <option name="width" value="1400" />
-    <option name="height" value="1000" />
+    <option name="x" value="438" />
+    <option name="y" value="27" />
+    <option name="width" value="1401" />
+    <option name="height" value="1001" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="AndroidView" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -72,16 +74,15 @@
           <select />
         </subPane>
       </pane>
-      <pane id="AndroidView" />
-      <pane id="PackagesPane" />
       <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../algs4-library/algs4.jar!/" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../algs4-tool/checkstyle.xml" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
+    <property name="settings.editor.selected.configurable" value="org.infernus.idea.checkstyle.CheckStyleConfigurable" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -131,31 +132,32 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-7" y="-7" width="1721" height="935" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="FindBugs-IDEA" order="7" />
-      <window_info anchor="bottom" id="Messages" />
+      <window_info anchor="bottom" id="FindBugs-IDEA" order="7" weight="0.32916147" />
+      <window_info anchor="bottom" id="Messages" order="8" />
       <window_info anchor="right" id="Palette&#9;" order="3" />
       <window_info id="Image Layers" order="2" />
+      <window_info anchor="bottom" id="PMD" weight="0.32916147" />
       <window_info anchor="right" id="Capture Analysis" order="3" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" weight="0.32943678" />
       <window_info anchor="right" id="Maven Projects" order="3" />
-      <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="CheckStyle" order="7" />
+      <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="CheckStyle" order="7" weight="0.32916147" />
       <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="2" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25346178" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info id="UI Designer" order="2" />
       <window_info anchor="right" id="Theme Preview" order="3" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.39924905" />
       <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.3995749" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -172,7 +174,19 @@
       <path value="$PROJECT_DIR$/.." />
     </ignored-roots>
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <option name="time" value="2" />
+    </breakpoint-manager>
+  </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/KdTree.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="242">
+          <caret line="11" column="23" selection-start-line="11" selection-start-column="23" selection-end-line="11" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/KdTree.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3480">
@@ -252,10 +266,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="jar://$PROJECT_DIR$/../algs4-library/algs4.jar!/edu/princeton/cs/algs4/Point2D.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="153" column="18" selection-start-line="153" selection-start-column="18" selection-end-line="153" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/KdTree.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-528">
-          <caret line="11" column="23" selection-start-line="11" selection-start-column="23" selection-end-line="11" selection-end-column="23" />
+        <state relative-caret-position="66">
+          <caret line="95" column="8" selection-start-line="95" selection-start-column="8" selection-end-line="95" selection-end-column="8" />
         </state>
       </provider>
     </entry>
