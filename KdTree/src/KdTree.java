@@ -49,7 +49,7 @@ public class KdTree {
     }
 
     private void put(Node node, Point2D p, boolean isVertical) {
-        if (node.p.compareTo(p) == 0)
+        if (node.p.equals(p))
             return;
 
         if (isVertical) {
@@ -100,7 +100,7 @@ public class KdTree {
         if (node == null)
             return false;
 
-        if (node.p.compareTo(p) == 0)
+        if (node.p.equals(p))
             return true;
 
         if (!node.rect.contains(p))
