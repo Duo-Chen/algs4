@@ -1,6 +1,7 @@
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.Stack;
+import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
 
 public class KdTree {
@@ -93,7 +94,7 @@ public class KdTree {
 
         if (node.p.compareTo(p) == 0)
             return true;
-        
+
         if (!node.rect.contains(p))
             return false;
 
@@ -101,17 +102,29 @@ public class KdTree {
     }
 
     public void draw() {
-        draw(root);
+        draw(root, true);
     }
 
-    private void draw(Node node) {
+    private void draw(Node node, boolean isVertical) {
         if (node == null)
             return;
 
+        StdDraw.setPenRadius(0.01);
+        StdDraw.setPenColor(StdDraw.BLACK);
         node.p.draw();
 
-        draw(node.lb);
-        draw(node.rt);
+        if (isVertical) {
+            StdDraw.setPenRadius(0.001);
+            StdDraw.setPenColor(StdDraw.RED);
+            StdDraw.line(node.p.x(), node.rect.ymin(), node.p.x(), node.rect.ymax());
+        } else {
+            StdDraw.setPenRadius(0.001);
+            StdDraw.setPenColor(StdDraw.BLUE);
+            StdDraw.line(node.rect.xmin(), node.p.y(), node.rect.xmax(), node.p.y());
+        }
+
+        draw(node.lb, !isVertical);
+        draw(node.rt, !isVertical);
     }
 
     public Iterable<Point2D> range(RectHV rect) {
@@ -189,6 +202,17 @@ public class KdTree {
         for (int i = 0; i < points.length; i++)
             kt.insert(points[i]);
 
-        StdOut.println(kt.nearest(new Point2D(0.428, 0.056)));
+        Point2D q = new Point2D(0.428, 0.056);
+        StdOut.println(kt.nearest(q));
+
+        StdDraw.enableDoubleBuffering();
+
+        kt.draw();
+
+        StdDraw.setPenColor(StdDraw.BLACK);
+        StdDraw.setPenRadius(0.01);
+        q.draw();
+
+        StdDraw.show();
     }
 }
