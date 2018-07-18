@@ -51,33 +51,32 @@ public class KdTree {
     }
 
     private void put(Node node, Point2D p, boolean isVertical) {
-        RectHV rectLB;
-        RectHV rectRT;
-        double px = node.p.x();
-        double py = node.p.y();
-        double left = node.rect.xmin();
-        double right = node.rect.xmax();
-        double bottom = node.rect.ymin();
-        double top = node.rect.ymax();
         if (isVertical) {
-            rectLB = new RectHV(left, bottom, px, top);
-            rectRT = new RectHV(px, bottom, right, top);
+            double px = node.p.x();
+            if (Double.compare(p.x(), px) < 0) {
+                if (node.lb == null)
+                    node.lb = new Node(p, new RectHV(node.rect.xmin(), node.rect.ymin(), px, node.rect.ymax()));
+                else
+                    put(node.lb, p, !isVertical);
+            } else {
+                if (node.rt == null)
+                    node.rt = new Node(p, new RectHV(px, node.rect.ymin(), node.rect.xmax(), node.rect.ymax()));
+                else
+                    put(node.rt, p, !isVertical);
+            }
         } else {
-            rectLB = new RectHV(left, bottom, right, py);
-            rectRT = new RectHV(left, py, right, top);
-        }
-
-        if ((isVertical && Double.compare(p.x(), px) < 0)
-            || (!isVertical && Double.compare(p.y(), py) < 0)) {
-            if (node.lb == null)
-                node.lb = new Node(p, rectLB);
-            else
-                put(node.lb, p, !isVertical);
-        } else {
-            if (node.rt == null)
-                node.rt = new Node(p, rectRT);
-            else
-                put(node.rt, p, !isVertical);
+            double py = node.p.y();
+            if (Double.compare(p.y(), py) < 0) {
+                if (node.lb == null)
+                    node.lb = new Node(p, new RectHV(node.rect.xmin(), node.rect.ymin(), node.rect.xmax(), py));
+                else
+                    put(node.lb, p, !isVertical);
+            } else {
+                if (node.rt == null)
+                    node.rt = new Node(p, new RectHV(node.rect.xmin(), py, node.rect.xmax(), node.rect.ymax()));
+                else
+                    put(node.rt, p, !isVertical);
+            }
         }
     }
 
