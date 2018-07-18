@@ -5,6 +5,7 @@ import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
 
 public class KdTree {
+    private static final double LINE_RADIUS = 0.001;
     private Node root;
     private int count;
 
@@ -39,43 +40,51 @@ public class KdTree {
         if (p == null)
             throw new IllegalArgumentException("insert p shouldn't be null.");
 
-        if (contains(p))
-            return;
-
         if (root == null) {
             root = new Node(p, new RectHV(0.0, 0.0, 1.0, 1.0));
+            count++;
         } else {
             put(root, p, true);
         }
-        count++;
     }
 
     private void put(Node node, Point2D p, boolean isVertical) {
+        if (node.p.compareTo(p) == 0)
+            return;
+
         if (isVertical) {
             double px = node.p.x();
             if (Double.compare(p.x(), px) < 0) {
-                if (node.lb == null)
+                if (node.lb == null) {
                     node.lb = new Node(p, new RectHV(node.rect.xmin(), node.rect.ymin(), px, node.rect.ymax()));
-                else
+                    count++;
+                } else {
                     put(node.lb, p, !isVertical);
+                }
             } else {
-                if (node.rt == null)
+                if (node.rt == null) {
                     node.rt = new Node(p, new RectHV(px, node.rect.ymin(), node.rect.xmax(), node.rect.ymax()));
-                else
+                    count++;
+                } else {
                     put(node.rt, p, !isVertical);
+                }
             }
         } else {
             double py = node.p.y();
             if (Double.compare(p.y(), py) < 0) {
-                if (node.lb == null)
+                if (node.lb == null) {
                     node.lb = new Node(p, new RectHV(node.rect.xmin(), node.rect.ymin(), node.rect.xmax(), py));
-                else
+                    count++;
+                } else {
                     put(node.lb, p, !isVertical);
+                }
             } else {
-                if (node.rt == null)
+                if (node.rt == null) {
                     node.rt = new Node(p, new RectHV(node.rect.xmin(), py, node.rect.xmax(), node.rect.ymax()));
-                else
+                    count++;
+                } else {
                     put(node.rt, p, !isVertical);
+                }
             }
         }
     }
@@ -108,12 +117,12 @@ public class KdTree {
         if (node == null)
             return;
 
+        StdDraw.setPenRadius(LINE_RADIUS);
+
         if (isVertical) {
-            StdDraw.setPenRadius(0.001);
             StdDraw.setPenColor(StdDraw.RED);
             StdDraw.line(node.p.x(), node.rect.ymin(), node.p.x(), node.rect.ymax());
         } else {
-            StdDraw.setPenRadius(0.001);
             StdDraw.setPenColor(StdDraw.BLUE);
             StdDraw.line(node.rect.xmin(), node.p.y(), node.rect.xmax(), node.p.y());
         }
@@ -169,9 +178,16 @@ public class KdTree {
         if (node == null)
             return q;
 
+        if (node.p.compareTo(p) == 0)
+            return p;
+
         double distance = Double.POSITIVE_INFINITY;
         if (q != null)
             distance = p.distanceSquaredTo(q);
+
+        double dRect = node.rect.distanceSquaredTo(p);
+        if (Double.compare(dRect, distance) >= 0)
+            return q;
 
         double d = node.p.distanceSquaredTo(p);
         if (Double.compare(d, distance) < 0)
@@ -195,14 +211,17 @@ public class KdTree {
             new Point2D(0.862, 0.825),
             new Point2D(0.785, 0.725),
             new Point2D(0.499, 0.208),
+            new Point2D(0.372, 0.497),
         };
 
         KdTree kt = new KdTree();
         for (int i = 0; i < points.length; i++)
             kt.insert(points[i]);
 
+        StdOut.println("Size : " + kt.size());
+
         Point2D q = new Point2D(0.428, 0.056);
-        StdOut.println(kt.nearest(q));
+        StdOut.println("Nearest : " + kt.nearest(q));
 
         StdDraw.enableDoubleBuffering();
 
