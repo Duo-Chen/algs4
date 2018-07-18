@@ -109,10 +109,6 @@ public class KdTree {
         if (node == null)
             return;
 
-        StdDraw.setPenRadius(0.01);
-        StdDraw.setPenColor(StdDraw.BLACK);
-        node.p.draw();
-
         if (isVertical) {
             StdDraw.setPenRadius(0.001);
             StdDraw.setPenColor(StdDraw.RED);
@@ -122,6 +118,10 @@ public class KdTree {
             StdDraw.setPenColor(StdDraw.BLUE);
             StdDraw.line(node.rect.xmin(), node.p.y(), node.rect.xmax(), node.p.y());
         }
+        
+        StdDraw.setPenRadius(0.01);
+        StdDraw.setPenColor(StdDraw.BLACK);
+        node.p.draw();
 
         draw(node.lb, !isVertical);
         draw(node.rt, !isVertical);
