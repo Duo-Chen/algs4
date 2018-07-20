@@ -23,6 +23,16 @@ public class KdTree {
         }
     }
 
+    private static class Near {
+        private Point2D q;
+        private double distance;
+
+        private Near(Point2D p, double d) {
+            q = p;
+            distance = d;
+        }
+    }
+
     public KdTree() {
         root = null;
         count = 0;
@@ -171,31 +181,57 @@ public class KdTree {
         if (p == null)
             throw new IllegalArgumentException("nearest p shouldn't be null.");
 
-        return nearest(root, p, null);
+        Near near = nearest(root, p, new Near(null, Double.POSITIVE_INFINITY), true);
+        return near.q;
     }
 
-    private Point2D nearest(Node node, Point2D p, Point2D q) {
+    private Near nearest(Node node, Point2D p, Near near, boolean isVertical) {
         if (node == null)
-            return q;
+            return near;
 
-        if (node.p.compareTo(p) == 0)
-            return p;
+        if (node.lb == null && node.rt == null) {
+            near.q = node.p;
+            near.distance = node.p.distanceSquaredTo(p);
+            StdOut.println("traverse : " + node.p);
+            return near;
+        }
 
-        double distance = Double.POSITIVE_INFINITY;
-        if (q != null)
-            distance = p.distanceSquaredTo(q);
+        /*
+        bestDistance = INF
 
-        double dRect = node.rect.distanceSquaredTo(p);
-        if (Double.compare(dRect, distance) >= 0)
-            return q;
+        def getClosest(node, point)
+            if node is null
+                return
+            // I will assume that this node splits points
+            // by their x coordinate for the sake of brevity.
+            if node is a leaf
+                // updateAnswer updates bestDistance value
+                // and keeps track of the closest point to the given one.
+                updateAnswer(node.point, point)
+            else
+                middleX = node.median
+                if point.x < middleX
+                    getClosest(node.left, point)
+                    if node.right.minX - point.x < bestDistance
+                        getClosest(node.right, point)
+                else
+                    getClosest(node.right, point)
+                    if point.x - node.left.maxX < bestDistance
+                        getClosest(node.left, point)
+         */
+        if (isVertical) {
+            if (Double.compare(node.p.x(), p.x()) > 0) {
 
-        double d = node.p.distanceSquaredTo(p);
-        if (Double.compare(d, distance) < 0)
-            q = node.p;
+            } else {
 
-        q = nearest(node.rt, p, q);
-        q = nearest(node.lb, p, q);
-        return q;
+            }
+        } else {
+            if (Double.compare(node.p.y(), p.y()) > 0) {
+
+            } else {
+
+            }
+        }
     }
 
     public static void main(String[] args) {
@@ -220,7 +256,7 @@ public class KdTree {
 
         StdOut.println("Size : " + kt.size());
 
-        Point2D q = new Point2D(0.428, 0.056);
+        Point2D q = new Point2D(0.34, 0.92);
         StdOut.println("Nearest : " + kt.nearest(q));
 
         StdDraw.enableDoubleBuffering();
