@@ -1,21 +1,23 @@
-import edu.princeton.cs.algs4.Digraph;
-import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.StdIn;
-import edu.princeton.cs.algs4.StdOut;
-
 public class Main {
+    private static void test_sap() {
+        String[] args = {"digraph1.txt"};
+        SAP.main(args);
+    }
+
+    private static void test_wordnet() {
+        String[] args = {};
+        WordNet.main(args);
+    }
+
+    private static void test_outcast() {
+        String[] args = {"synsets.txt", "hypernyms.txt", "outcast5.txt", "outcast8.txt", "outcast11.txt"};
+        Outcast.main(args);
+    }
+
     public static void main(String[] args) {
 	// write your code here
-        String filename = "";
-        In in = new In(filename);
-        Digraph G = new Digraph(in);
-        SAP sap = new SAP(G);
-        while (!StdIn.isEmpty()) {
-            int v = StdIn.readInt();
-            int w = StdIn.readInt();
-            int length   = sap.length(v, w);
-            int ancestor = sap.ancestor(v, w);
-            StdOut.printf("length = %d, ancestor = %d\n", length, ancestor);
-        }
+        //test_sap();
+        //test_wordnet();
+        test_outcast();
     }
 }
