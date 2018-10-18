@@ -1,8 +1,7 @@
-import edu.princeton.cs.algs4.Digraph;
-import edu.princeton.cs.algs4.DirectedCycle;
-import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.RedBlackBST;
-import edu.princeton.cs.algs4.SET;
+import edu.princeton.cs.algs4.*;
+
+import java.util.Dictionary;
+import java.util.HashMap;
 
 public class WordNet {
     private final SAP sap;
@@ -43,7 +42,21 @@ public class WordNet {
         if (dc.hasCycle())
             throw new IllegalArgumentException("No cycle");
 
+        DetectRoot(G);
+
         sap = new SAP(G);
+    }
+
+    private void DetectRoot(Digraph G) {
+        SET<Integer> roots = new SET<Integer>();
+        for (int i = 0; i < G.V(); i++) {
+            if (!G.adj(i).iterator().hasNext()) {
+                roots.add(i);
+            }
+        }
+
+        if (roots.size() == 0 || roots.size() > 1)
+            throw new IllegalArgumentException("Not single root");
     }
 
     // returns all WordNet nouns
@@ -80,10 +93,41 @@ public class WordNet {
 
     // do unit testing of this class
     public static void main(String[] args) {
-        WordNet wn1 = new WordNet("synsets8.txt", "hypernyms8ManyAncestors.txt");
-        WordNet wn2 = new WordNet("synsets11.txt", "hypernyms11ManyPathsOneAncestor.txt");
-        WordNet wn3 = new WordNet("synsets8.txt", "hypernyms8WrongBFS.txt");
-        WordNet wn5 = new WordNet("synsets15.txt", "hypernyms15Tree.txt");
-        WordNet wn6 = new WordNet("synsets15.txt", "hypernyms15Path.txt");
+        class TestWordNet {
+            private final String synsets;
+            private final String hypernyms;
+
+            public TestWordNet(String s, String h) {
+                this.synsets = s;
+                this.hypernyms = h;
+            }
+
+            public void verify() {
+                WordNet wn = new WordNet(synsets, hypernyms);
+            }
+
+            public String ToString() {
+                return synsets + " " + hypernyms;
+            }
+        }
+
+        TestWordNet[] test = new TestWordNet[] {
+            new TestWordNet("synsets3.txt", "hypernyms3InvalidTwoRoots.txt"),
+            new TestWordNet("synsets6.txt", "hypernyms6InvalidTwoRoots.txt"),
+            new TestWordNet("synsets6.txt", "hypernyms6InvalidCycle+Path.txt"),
+        };
+
+
+        for (TestWordNet t : test) {
+            boolean hasException = false;
+            try {
+                t.verify();
+            } catch (Exception ex) {
+                hasException = true;
+            } finally {
+                if (!hasException)
+                    StdOut.println(t + "must throw exception!");
+            }
+        }
     }
 }
