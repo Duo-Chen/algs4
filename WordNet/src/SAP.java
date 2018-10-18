@@ -129,7 +129,7 @@ public class SAP {
                 sap = new SAP(G);
             }
 
-            public boolean IsCorrect() {
+            public boolean isCorrect() {
                 boolean res = sap.length(v, w) == length
                         && sap.ancestor(v, w) == ancestor;
 
@@ -149,7 +149,7 @@ public class SAP {
         };
 
         for (SapTest tester : tests) {
-           tester.IsCorrect();
+           tester.isCorrect();
         }
     }
 }
