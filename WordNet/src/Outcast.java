@@ -12,7 +12,6 @@ public class Outcast {
     public String outcast(String[] nouns) {
         int[] length = new int[nouns.length];
         for (int i = 0; i < nouns.length; i++) {
-            int sum = 0;
             for (int j = 0; j < nouns.length; j++) {
                 if (i == j)
                     continue;

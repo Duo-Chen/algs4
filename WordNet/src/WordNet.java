@@ -1,44 +1,36 @@
 import edu.princeton.cs.algs4.Digraph;
+import edu.princeton.cs.algs4.DirectedCycle;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.RedBlackBST;
+import edu.princeton.cs.algs4.SET;
 
 public class WordNet {
     private final SAP sap;
-
-    private static class Node {
-        public final String synsets;
-        public final int id;
-        public final String gloss;
-        public Node(String synsets, int id, String b) {
-            this.synsets = synsets;
-            this.id = id;
-            gloss = b;
-        }
-    }
-
-    private final RedBlackBST<String, Node> bst;
-    private final Node[] nodes;
+    private final RedBlackBST<String, SET<Integer>> bst;
+    private final String[] nodes;
 
     // constructor takes the name of the two input files
     public WordNet(String synsets, String hypernyms) {
         In inSynsets = new In(synsets);
         String[] sets = inSynsets.readAllLines();
-        nodes = new Node[sets.length];
+        nodes = new String[sets.length];
         bst = new RedBlackBST<>();
         for (String line : sets) {
             String[] strs = line.split(",");
             int id = Integer.parseInt(strs[0]);
-            Node node = new Node(strs[1], id, strs[2]);
+            nodes[id] = strs[1];
             String[] nouns = strs[1].split(" ");
-            for (String noun : nouns)
-                bst.put(noun, node);
+            for (String noun : nouns) {
+                if (!bst.contains(noun))
+                    bst.put(noun, new SET<>());
 
-            nodes[id] = node;
+                bst.get(noun).add(id);
+            }
         }
 
         In inHypernyms = new In(hypernyms);
         String[] lines = inHypernyms.readAllLines();
-        Digraph G = new Digraph(lines.length);
+        Digraph G = new Digraph(nodes.length);
         for (String line : lines) {
             String[] strIDs = line.split(",");
             int id = Integer.parseInt(strIDs[0]);
@@ -46,6 +38,10 @@ public class WordNet {
                 G.addEdge(id, Integer.parseInt(strIDs[i]));
             }
         }
+
+        DirectedCycle dc = new DirectedCycle(G);
+        if (dc.hasCycle())
+            throw new IllegalArgumentException("No cycle");
 
         sap = new SAP(G);
     }
@@ -65,8 +61,8 @@ public class WordNet {
         if (!bst.contains(nounA) || !bst.contains(nounB))
             throw new IllegalArgumentException("WordNet.distance()");
 
-        int idA = bst.get(nounA).id;
-        int idB = bst.get(nounB).id;
+        SET<Integer> idA = bst.get(nounA);
+        SET<Integer> idB = bst.get(nounB);
         return sap.length(idA, idB);
     }
 
@@ -76,14 +72,18 @@ public class WordNet {
         if (!bst.contains(nounA) || !bst.contains(nounB))
             throw new IllegalArgumentException("WordNet.sap()");
 
-        int idA = bst.get(nounA).id;
-        int idB = bst.get(nounB).id;
+        SET<Integer> idA = bst.get(nounA);
+        SET<Integer> idB = bst.get(nounB);
         int id = sap.ancestor(idA, idB);
-        return nodes[id].synsets;
+        return nodes[id];
     }
 
     // do unit testing of this class
     public static void main(String[] args) {
-        throw new IllegalArgumentException("not yet implemented");
+        WordNet wn1 = new WordNet("synsets8.txt", "hypernyms8ManyAncestors.txt");
+        WordNet wn2 = new WordNet("synsets11.txt", "hypernyms11ManyPathsOneAncestor.txt");
+        WordNet wn3 = new WordNet("synsets8.txt", "hypernyms8WrongBFS.txt");
+        WordNet wn5 = new WordNet("synsets15.txt", "hypernyms15Tree.txt");
+        WordNet wn6 = new WordNet("synsets15.txt", "hypernyms15Path.txt");
     }
 }
