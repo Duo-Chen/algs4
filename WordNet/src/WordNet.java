@@ -1,7 +1,9 @@
-import edu.princeton.cs.algs4.*;
-
-import java.util.Dictionary;
-import java.util.HashMap;
+import edu.princeton.cs.algs4.Digraph;
+import edu.princeton.cs.algs4.DirectedCycle;
+import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.RedBlackBST;
+import edu.princeton.cs.algs4.SET;
+import edu.princeton.cs.algs4.StdOut;
 
 public class WordNet {
     private final SAP sap;
@@ -42,12 +44,12 @@ public class WordNet {
         if (dc.hasCycle())
             throw new IllegalArgumentException("No cycle");
 
-        DetectRoot(G);
+        detectRoot(G);
 
         sap = new SAP(G);
     }
 
-    private void DetectRoot(Digraph G) {
+    private void detectRoot(Digraph G) {
         SET<Integer> roots = new SET<Integer>();
         for (int i = 0; i < G.V(); i++) {
             if (!G.adj(i).iterator().hasNext()) {
@@ -106,7 +108,7 @@ public class WordNet {
                 WordNet wn = new WordNet(synsets, hypernyms);
             }
 
-            public String ToString() {
+            public String toString() {
                 return synsets + " " + hypernyms;
             }
         }
@@ -122,7 +124,7 @@ public class WordNet {
             boolean hasException = false;
             try {
                 t.verify();
-            } catch (Exception ex) {
+            } catch (IllegalArgumentException ex) {
                 hasException = true;
             } finally {
                 if (!hasException)
