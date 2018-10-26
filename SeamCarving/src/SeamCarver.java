@@ -95,17 +95,17 @@ public class SeamCarver {
 
     // sequence of indices for horizontal seam
     public int[] findHorizontalSeam() {
-        double[][] engergy = getEnergy();
+        double[][] energy = getEnergy();
 
         EdgeWeightedDigraph G = new EdgeWeightedDigraph(width * height);
         for (int w = 0; w < width - 1; w++) {
             for (int h = 0; h < height; h++) {
                 int v = w + h * width;
-                G.addEdge(new DirectedEdge(v, v + 1, engergy[w][h]));
+                G.addEdge(new DirectedEdge(v, v + 1, energy[w][h]));
                 if (h != 0)
-                    G.addEdge(new DirectedEdge(v, v - width + 1, engergy[w][h]));
+                    G.addEdge(new DirectedEdge(v, v - width + 1, energy[w][h]));
                 if (h != height - 1)
-                    G.addEdge(new DirectedEdge(v, v + width + 1, engergy[w][h]));
+                    G.addEdge(new DirectedEdge(v, v + width + 1, energy[w][h]));
             }
         }
 
@@ -130,17 +130,17 @@ public class SeamCarver {
 
     // sequence of indices for vertical seam
     public int[] findVerticalSeam() {
-        double[][] engergy = getEnergy();
+        double[][] energy = getEnergy();
 
         EdgeWeightedDigraph G = new EdgeWeightedDigraph(width * height);
         for (int w = 0; w < width; w++) {
             for (int h = 0; h < height - 1; h++) {
                 int v = w + h * width;
-                G.addEdge(new DirectedEdge(v, v + width, engergy[w][h]));
+                G.addEdge(new DirectedEdge(v, v + width, energy[w][h]));
                 if (w != 0)
-                    G.addEdge(new DirectedEdge(v, v + width - 1, engergy[w][h]));
+                    G.addEdge(new DirectedEdge(v, v + width - 1, energy[w][h]));
                 if (w != width - 1)
-                    G.addEdge(new DirectedEdge(v, v + width + 1, engergy[w][h]));
+                    G.addEdge(new DirectedEdge(v, v + width + 1, energy[w][h]));
             }
         }
 
