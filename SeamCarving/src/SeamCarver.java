@@ -217,23 +217,35 @@ public class SeamCarver {
     // remove horizontal seam from current picture
     public void removeHorizontalSeam(int[] seam) {
         if (seam == null || seam.length != width || height <= 1)
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException("Invalid call");
 
-        for (int x = 0; x < width; x++)
+        for (int x = 0; x < width; x++) {
+            if (seam[x] < 0 || seam[x] >= height)
+                throw new IllegalArgumentException("Invalid seam");
+            if (x > 0 && Math.abs(seam[x] - seam[x - 1]) > 1)
+                throw new IllegalArgumentException("Invalid seam");
+
             for (int y = seam[x]; y < height - 1; y++)
                 rgb[x][y] = rgb[x][y + 1];
+        }
 
         height--;
     }
 
     // remove vertical seam from current picture
     public void removeVerticalSeam(int[] seam) {
-        if (seam == null || seam.length != height || width < 1)
-            throw new IllegalArgumentException("");
+        if (seam == null || seam.length != height || width <= 1)
+            throw new IllegalArgumentException("Invalid call");
 
-        for (int y = 0; y < height; y++)
+        for (int y = 0; y < height; y++) {
+            if (seam[y] < 0 || seam[y] >= width)
+                throw new IllegalArgumentException("Invalid seam");
+            if (y > 0 && Math.abs(seam[y] - seam[y - 1]) > 1)
+                throw new IllegalArgumentException("Invalid seam");
+
             for (int x = seam[y]; x < width - 1; x++)
-                rgb[x][y] = rgb[x + 1][y];
+               rgb[x][y] = rgb[x + 1][y];
+        }
 
         width--;
     }

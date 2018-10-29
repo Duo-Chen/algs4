@@ -1,4 +1,5 @@
 public class Main {
+    private static final String folder = "D:\\algs4\\SeamCarving\\src\\";
 
     public static void main(String[] args) {
 	// write your code here
@@ -10,7 +11,7 @@ public class Main {
 
         for (String file : files) {
             String[] arguments = new String[1];
-            arguments[0] = "D:\\algs4\\SeamCarving\\src\\" + file;
+            arguments[0] = folder + file;
             PrintSeams.main(arguments);
         }
     }
