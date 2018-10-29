@@ -231,10 +231,9 @@ public class SeamCarver {
         if (seam == null || seam.length != height || height <= 1)
             throw new IllegalArgumentException("");
 
-        for (int y = 0; y < height; y++) {
-            for (int x = seam[y]; x < width - 1; y++)
+        for (int y = 0; y < height; y++)
+            for (int x = seam[y]; x < width - 1; x++)
                 rgb[x][y] = rgb[x + 1][y];
-        }
 
         width--;
     }
