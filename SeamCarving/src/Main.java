@@ -11,7 +11,6 @@ public class Main {
         for (String file : files) {
             String[] arguments = new String[1];
             arguments[0] = "D:\\algs4\\SeamCarving\\src\\" + file;
-            //PrintEnergy.main(arguments);
             PrintSeams.main(arguments);
         }
     }

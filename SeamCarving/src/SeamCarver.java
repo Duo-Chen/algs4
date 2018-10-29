@@ -1,6 +1,4 @@
-import edu.princeton.cs.algs4.DijkstraSP;
-import edu.princeton.cs.algs4.DirectedEdge;
-import edu.princeton.cs.algs4.EdgeWeightedDigraph;
+import edu.princeton.cs.algs4.IndexMinPQ;
 import edu.princeton.cs.algs4.Picture;
 
 public class SeamCarver {
@@ -97,32 +95,58 @@ public class SeamCarver {
     public int[] findHorizontalSeam() {
         double[][] energy = getEnergy();
 
-        EdgeWeightedDigraph G = new EdgeWeightedDigraph(width * height);
-        for (int w = 0; w < width - 1; w++) {
-            for (int h = 0; h < height; h++) {
-                int v = w + h * width;
-                G.addEdge(new DirectedEdge(v, v + 1, energy[w][h]));
-                if (h != 0)
-                    G.addEdge(new DirectedEdge(v, v - width + 1, energy[w][h]));
-                if (h != height - 1)
-                    G.addEdge(new DirectedEdge(v, v + width + 1, energy[w][h]));
+        double[][] distTo = new double[width][height];
+        int[][] edgeTo = new int[width][height];
+        IndexMinPQ<Double> pq = new IndexMinPQ<>(width * height);
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                if (x == 0) {
+                    distTo[x][y] = 0.0;
+                    pq.insert(x + y * width, 0.0);
+                } else {
+                    distTo[x][y] = Double.POSITIVE_INFINITY;
+                }
             }
         }
 
-        int[] seam = new int [width];
-        double path = Double.MAX_VALUE;
-        for (int i = 0; i < height; i++) {
-            DijkstraSP sp = new DijkstraSP(G, i);
+        // relax vertices in order of distance from s
+        while (!pq.isEmpty()) {
+            int key = pq.delMin();
+            int x = key % width;
+            int y = key / width;
+            for (int i = -1; i < 2; i++) {
+                if (y + i < 0 || y + i >= height || x + 1 >= width)
+                    continue;
 
-            for (int j = 0; j < height; j++) {
-                double dist = sp.distTo(j);
-                if (dist < path) {
-                    path = dist;
-                    for (DirectedEdge e : sp.pathTo(j)) {
-                        seam[j] = e.from() / width;
-                    }
+                // relax edge e and update pq if changed
+                if (distTo[x + 1][y + i] > distTo[x][y] + energy[x + 1][y + i]) {
+                    distTo[x + 1][y + i] = distTo[x][y] + energy[x + 1][y + i];
+                    edgeTo[x + 1][y + i] = key;
+                    int w = x + 1 + (y + i) * width;
+                    if (pq.contains(w))
+                        pq.decreaseKey(w, distTo[x + 1][y + i]);
+                    else
+                        pq.insert(w, distTo[x + 1][y + i]);
                 }
             }
+        }
+
+        int[] seam = new int[width];
+        double sp = Double.MAX_VALUE;
+        for (int y = 0; y < height; y++) {
+            if (distTo[width - 1][y] < sp) {
+                sp = distTo[width - 1][y];
+                seam[width - 1] = y;
+            }
+        }
+
+        int y = seam[width - 1];
+        int x = width - 1;
+        while (x > 0) {
+            int w = edgeTo[x][y];
+            y = w / width;
+            seam[x - 1] = y;
+            x--;
         }
 
         return seam;
@@ -132,32 +156,58 @@ public class SeamCarver {
     public int[] findVerticalSeam() {
         double[][] energy = getEnergy();
 
-        EdgeWeightedDigraph G = new EdgeWeightedDigraph(width * height);
-        for (int w = 0; w < width; w++) {
-            for (int h = 0; h < height - 1; h++) {
-                int v = w + h * width;
-                G.addEdge(new DirectedEdge(v, v + width, energy[w][h]));
-                if (w != 0)
-                    G.addEdge(new DirectedEdge(v, v + width - 1, energy[w][h]));
-                if (w != width - 1)
-                    G.addEdge(new DirectedEdge(v, v + width + 1, energy[w][h]));
+        double[][] distTo = new double[width][height];
+        int[][] edgeTo = new int[width][height];
+        IndexMinPQ<Double> pq = new IndexMinPQ<>(width * height);
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                if (y == 0) {
+                    distTo[x][y] = 0.0;
+                    pq.insert(x + y * width, 0.0);
+                } else {
+                    distTo[x][y] = Double.POSITIVE_INFINITY;
+                }
             }
         }
 
-        int[] seam = new int [height];
-        double path = Double.MAX_VALUE;
-        for (int i = 0; i < width; i++) {
-            DijkstraSP sp = new DijkstraSP(G, i);
+        // relax vertices in order of distance from s
+        while (!pq.isEmpty()) {
+            int key = pq.delMin();
+            int x = key % width;
+            int y = key / width;
+            for (int i = -1; i < 2; i++) {
+                if (x + i < 0 || x + i >= width || y + 1 >= height)
+                    continue;
 
-            for (int j = 0; j < width; j++) {
-                double dist = sp.distTo(j);
-                if (dist < path) {
-                    path = dist;
-                    for (DirectedEdge e : sp.pathTo(j)) {
-                        seam[j] = e.from() / width;
-                    }
+                // relax edge e and update pq if changed
+                if (distTo[x + i][y + 1] > distTo[x][y] + energy[x + i][y + 1]) {
+                    distTo[x + i][y + 1] = distTo[x][y] + energy[x + i][y + 1];
+                    edgeTo[x + i][y + 1] = key;
+                    int w = x + i + (y + 1) * width;
+                    if (pq.contains(w))
+                        pq.decreaseKey(w, distTo[x + i][y + 1]);
+                    else
+                        pq.insert(w, distTo[x + i][y + 1]);
                 }
             }
+        }
+
+        int[] seam = new int[height];
+        double sp = Double.MAX_VALUE;
+        for (int x = 0; x < width; x++) {
+            if (distTo[x][height - 1] < sp) {
+                sp = distTo[x][height - 1];
+                seam[height - 1] = x;
+            }
+        }
+
+        int x = seam[height - 1];
+        int y = height - 1;
+        while (y > 0) {
+            int w = edgeTo[x][y];
+            x = w % width;
+            seam[y - 1] = x;
+            y--;
         }
 
         return seam;
