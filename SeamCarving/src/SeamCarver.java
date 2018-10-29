@@ -2,6 +2,7 @@ import edu.princeton.cs.algs4.IndexMinPQ;
 import edu.princeton.cs.algs4.Picture;
 
 public class SeamCarver {
+    private static final double BORDER_ENERGY = 1000.0;
     private int width, height;
     private int[][] rgb;
 
@@ -71,7 +72,7 @@ public class SeamCarver {
             throw new IllegalArgumentException(x + " or " + y + " is out of range.");
 
         if (x == 0 || y == 0 || x == width - 1 || y == height - 1)
-            return 1000.0;
+            return BORDER_ENERGY;
 
         return getPixelEnergy(x, y);
     }
@@ -82,7 +83,7 @@ public class SeamCarver {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 if (x == 0 || y == 0 || x == width - 1 || y == height - 1)
-                    energy[x][y] = 1000.0;
+                    energy[x][y] = BORDER_ENERGY;
                 else
                     energy[x][y] = getPixelEnergy(x, y);
             }
@@ -132,7 +133,7 @@ public class SeamCarver {
         }
 
         int[] seam = new int[width];
-        double sp = Double.MAX_VALUE;
+        double sp = Double.POSITIVE_INFINITY;
         for (int y = 0; y < height; y++) {
             if (distTo[width - 1][y] < sp) {
                 sp = distTo[width - 1][y];
@@ -193,7 +194,7 @@ public class SeamCarver {
         }
 
         int[] seam = new int[height];
-        double sp = Double.MAX_VALUE;
+        double sp = Double.POSITIVE_INFINITY;
         for (int x = 0; x < width; x++) {
             if (distTo[x][height - 1] < sp) {
                 sp = distTo[x][height - 1];
@@ -218,10 +219,9 @@ public class SeamCarver {
         if (seam == null || seam.length != width || width <= 1)
             throw new IllegalArgumentException("");
 
-        for (int x = 0; x < width; x++) {
+        for (int x = 0; x < width; x++)
             for (int y = seam[x]; y < height - 1; y++)
-              rgb[x][y] = rgb[x][y + 1];
-        }
+                rgb[x][y] = rgb[x][y + 1];
 
         height--;
     }
