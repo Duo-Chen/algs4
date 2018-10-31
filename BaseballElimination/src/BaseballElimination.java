@@ -5,6 +5,8 @@ import edu.princeton.cs.algs4.FordFulkerson;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Queue;
 
+import java.lang.reflect.Array;
+
 public class BaseballElimination {
     private final String[] teams;
     private final int[] win;
@@ -26,7 +28,7 @@ public class BaseballElimination {
         against = new int[teamNum][teamNum];
         elimination = new boolean[teamNum];
         flowFrom = new int[teamNum];
-        subset = (Bag<String>[]) new Bag[teamNum];
+        subset = (Bag<String>[]) Array.newInstance(new Bag<String>().getClass(), teamNum);
 
         for (int index = 0; index < teamNum; index++) {
             String name = in.readString();
