@@ -5,7 +5,7 @@ public class Main {
 
     public static void main(String[] args) {
 	// write your code here
-        String[] files = { "teams4.txt", "teams5.txt" };
+        String[] files = { "teams4.txt", "teams4b.txt", "teams5.txt", "teams12-allgames.txt" };
         for (String file : files) {
             StdOut.println("====== " + file + " ======");
             runElimination(folder + file);
