@@ -1,11 +1,13 @@
-import edu.princeton.cs.algs4.BreadthFirstDirectedPaths;
+import edu.princeton.cs.algs4.DepthFirstDirectedPaths;
 import edu.princeton.cs.algs4.Digraph;
+import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.SET;
 
 import java.util.HashMap;
 
 public class BoggleSolver {
     private final HashMap<String, Integer> dict;
+    private HashMap<Character, SET<Integer>> hash;
 
     public BoggleSolver(String[] dictionary) {
         if (dictionary == null)
@@ -27,10 +29,10 @@ public class BoggleSolver {
         SET<String> res = new SET<>();
         int col = board.cols();
         int row = board.rows();
-        HashMap<Character, SET<Integer>> hash = createDigraph(board, col, row);
+        createDigraph(board, col, row);
 
         for (String str : dict.keySet()) {
-            int points = countPoints(str, hash, col, row);
+            int points = countPoints(str, col, row);
             if (points > 0) {
                 dict.put(str, points);
                 res.add(str);
@@ -53,11 +55,10 @@ public class BoggleSolver {
             return 11;
     }
 
-    private int countPoints(String str, HashMap<Character, SET<Integer>> hash, int col, int row) {
-        int path = str.length() - 1;
+    private int countPoints(String str, int col, int row) {
         int points = length2point(str.length());
         boolean isQu = false;
-
+        Stack<Character> pat = new Stack<>();
         Digraph G = new Digraph(col * row);
 
         for (int i = 0; i < str.length(); i++) {
@@ -95,41 +96,71 @@ public class BoggleSolver {
                 } else
                     return 0;
             }
+
+            pat.push(c);
         }
 
-        if (str.compareTo("QUERIES") == 0) {
-            int a = 0;
-            a++;
-        }
-
-        for (int s : hash.get(str.charAt(0))) {
-            BreadthFirstDirectedPaths bfs = new BreadthFirstDirectedPaths(G, s);
-            for (int t : hash.get(str.charAt(str.length() - 1))) {
-                if (bfs.hasPathTo(t))
-                    if (bfs.distTo(t) == path)
-                        return points;
-            }
-        }
+        if (isValidPath(G, pat, 0, new SET<>()))
+            return points;
 
         return 0;
     }
 
-    private HashMap<Character, SET<Integer>> createDigraph(BoggleBoard board, int col, int row) {
-        HashMap<Character, SET<Integer>> G = new HashMap<>();
+    private <T> Stack<T> copySeq(Stack<T> seq) {
+        Stack<T> temp = new Stack<>();
+        while (!seq.isEmpty())
+            temp.push(seq.pop());
+
+        Stack<T> res = new Stack<>();
+        while (!temp.isEmpty()) {
+            T t = temp.pop();
+            seq.push(t);
+            res.push(t);
+        }
+
+        return res;
+    }
+
+    private boolean isValidPath(Digraph G, Stack<Character> pat, int t, SET<Integer> seq) {
+        if (pat.isEmpty())
+            return true;
+
+        boolean hasPath = false;
+        Stack<Character> newPat = copySeq(pat);
+        if (seq.isEmpty()) {
+            for (int s : hash.get(newPat.pop())) {
+                SET<Integer> newSeq = new SET<>(seq);
+                newSeq.add(s);
+                hasPath |= isValidPath(G, newPat, s, newSeq);
+            }
+        } else {
+            for (int s : hash.get(newPat.pop())) {
+                DepthFirstDirectedPaths dfs = new DepthFirstDirectedPaths(G, s);
+                if (dfs.hasPathTo(t) && !seq.contains(s)) {
+                    SET<Integer> newSeq = new SET<>(seq);
+                    newSeq.add(s);
+                    hasPath |= isValidPath(G, newPat, s, newSeq);
+                }
+            }
+        }
+
+        return hasPath;
+    }
+
+    private void createDigraph(BoggleBoard board, int col, int row) {
+        hash = new HashMap<>();
 
         for (int x = 0; x < col; x++) {
             for (int y = 0; y < row; y++) {
                 int v = x + y * col;
 
                 Character c = board.getLetter(y, x);
-                if (!G.containsKey(c))
-                    G.put(c, new SET<>());
+                if (!hash.containsKey(c))
+                    hash.put(c, new SET<>());
 
-                G.get(c).add(v);
+                hash.get(c).add(v);
             }
         }
-
-        return G;
     }
 
     public int scoreOf(String word) {
@@ -149,10 +180,10 @@ public class BoggleSolver {
     public static void main(String[] args) {
         String[][] test = {
                 { "board4x4.txt", "1" },
-                { "board-q.txt", "2" }
+                { "board-q.txt", "3" }
         };
 
-        String[] dict = { "SIT", "QUERIES", "EQUATION" };
+        String[] dict = { "SIT", "QUERIES", "EQUATION", "ADAPT", "ADAPTED", "AIDED", "DEEP", "STATION" };
         BoggleSolver solver = new BoggleSolver(dict);
 
         for (String[] str : test) {
