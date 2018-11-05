@@ -1,6 +1,3 @@
-import edu.princeton.cs.algs4.DepthFirstDirectedPaths;
-import edu.princeton.cs.algs4.Digraph;
-import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.SET;
 
 import java.util.HashMap;
@@ -29,7 +26,7 @@ public class BoggleSolver {
         SET<String> res = new SET<>();
         int col = board.cols();
         int row = board.rows();
-        createDigraph(board, col, row);
+        createHash(board, col, row);
 
         for (String str : dict.keySet()) {
             int points = countPoints(str, col, row);
@@ -57,89 +54,45 @@ public class BoggleSolver {
 
     private int countPoints(String str, int col, int row) {
         int points = length2point(str.length());
-        boolean isQu = false;
-        Stack<Character> pat = new Stack<>();
-        Digraph G = new Digraph(col * row);
-
-        for (int i = 0; i < str.length(); i++) {
-            if (!hash.containsKey(str.charAt(i)))
-                return 0;
-
-            char c = str.charAt(i);
-            if (i > 0) {
-                char cv;
-                if (isQu)
-                    cv = str.charAt(i - 2);
-                else
-                    cv = str.charAt(i - 1);
-
-                isQu = false;
-
-                for (int v : hash.get(cv)) {
-                    for (int w : hash.get(c)) {
-                        int vX = v % col;
-                        int vY = v / col;
-                        int wX = w % col;
-                        int wY = w / col;
-                        if ((vX == wX && Math.abs(vY - wY) == 1)
-                        || (vY == wY && Math.abs(vX - wX) == 1)
-                        || (Math.abs(vX - wX) == 1 && Math.abs(vY - wY) == 1))
-                            G.addEdge(v, w);
-                    }
-                }
-            }
-
-            if (c == 'Q') {
-                if (i < str.length() - 1 && str.charAt(i + 1) == 'U') {
-                    i++;
-                    isQu = true;
-                } else
-                    return 0;
-            }
-
-            pat.push(c);
-        }
-
-        if (isValidPath(G, pat, 0, new SET<>()))
+        if (isValidPath(str, 0, new SET<>(), col, row))
             return points;
 
         return 0;
     }
 
-    private <T> Stack<T> copySeq(Stack<T> seq) {
-        Stack<T> temp = new Stack<>();
-        while (!seq.isEmpty())
-            temp.push(seq.pop());
-
-        Stack<T> res = new Stack<>();
-        while (!temp.isEmpty()) {
-            T t = temp.pop();
-            seq.push(t);
-            res.push(t);
-        }
-
-        return res;
-    }
-
-    private boolean isValidPath(Digraph G, Stack<Character> pat, int t, SET<Integer> seq) {
-        if (pat.isEmpty())
+    private boolean isValidPath(String str, int s, SET<Integer> set, int col, int row) {
+        if (str.length() == 0)
             return true;
 
         boolean hasPath = false;
-        Stack<Character> newPat = copySeq(pat);
-        if (seq.isEmpty()) {
-            for (int s : hash.get(newPat.pop())) {
-                SET<Integer> newSeq = new SET<>(seq);
-                newSeq.add(s);
-                hasPath |= isValidPath(G, newPat, s, newSeq);
+        char c = str.charAt(0);
+        int b = c == 'Q' ? 2 : 1;
+        SET<Integer> next = hash.get(c);
+        if (next == null)
+            return false;
+
+        if (set.isEmpty()) {
+            for (int v : next) {
+                SET<Integer> newSet = new SET<>(set);
+                newSet.add(v);
+                hasPath |= isValidPath(str.substring(b), v, newSet, col, row);
             }
         } else {
-            for (int s : hash.get(newPat.pop())) {
-                DepthFirstDirectedPaths dfs = new DepthFirstDirectedPaths(G, s);
-                if (dfs.hasPathTo(t) && !seq.contains(s)) {
-                    SET<Integer> newSeq = new SET<>(seq);
-                    newSeq.add(s);
-                    hasPath |= isValidPath(G, newPat, s, newSeq);
+            for (int t : next) {
+                int tX = t % col;
+                int tY = t / col;
+                int sX = s % col;
+                int sY = s / col;
+                int dX = Math.abs(tX - sX);
+                int dY = Math.abs(tY - sY);
+                if ((dX == 0 && dY == 1)
+                        || (dX == 1 && dY == 0)
+                        || (dX == 1 && dY == 1)) {
+                    if (!set.contains(t)) {
+                        SET<Integer> newSet = new SET<>(set);
+                        newSet.add(t);
+                        hasPath |= isValidPath(str.substring(b), t, newSet, col, row);
+                    }
                 }
             }
         }
@@ -147,7 +100,7 @@ public class BoggleSolver {
         return hasPath;
     }
 
-    private void createDigraph(BoggleBoard board, int col, int row) {
+    private void createHash(BoggleBoard board, int col, int row) {
         hash = new HashMap<>();
 
         for (int x = 0; x < col; x++) {
@@ -183,7 +136,7 @@ public class BoggleSolver {
                 { "board-q.txt", "3" }
         };
 
-        String[] dict = { "SIT", "QUERIES", "EQUATION", "ADAPT", "ADAPTED", "AIDED", "DEEP", "STATION" };
+        String[] dict = { "SIT", "QUERIES", "EQUATION", "STATION" };
         BoggleSolver solver = new BoggleSolver(dict);
 
         for (String[] str : test) {
