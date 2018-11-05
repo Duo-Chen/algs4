@@ -9,7 +9,8 @@ public class Main {
 
         String[][] strings = {
                 { "dictionary-algs4.txt", "board4x4.txt", "33" },
-                { "dictionary-algs4.txt", "board-q.txt", "84" }
+                { "dictionary-algs4.txt", "board-q.txt", "84" },
+                { "dictionary-16q.txt", "board-16q.txt", "147" }
         };
 
         for (String[] str : strings) {

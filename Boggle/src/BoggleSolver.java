@@ -6,6 +6,7 @@ import java.util.HashMap;
 public class BoggleSolver {
     private final HashMap<String, Integer> dict;
     private HashMap<Character, SET<Integer>> hash;
+    private int max_length;
 
     public BoggleSolver(String[] dictionary) {
         if (dictionary == null)
@@ -16,7 +17,7 @@ public class BoggleSolver {
             if (str.length() < 3)
                 continue;
 
-            dict.put(str.toUpperCase(), 0);
+            dict.put(str.toUpperCase(), length2point(str.length()));
         }
     }
 
@@ -54,8 +55,29 @@ public class BoggleSolver {
     }
 
     private int countPoints(String str, int col, int row) {
+        if (str.length() > max_length)
+            return 0;
+
         int points = length2point(str.length());
-        if (isValidPath(str, 0, new SET<>(), col, row))
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (!hash.containsKey(c))
+                return 0;
+
+            if (c == 'Q')
+                if (i + 1 < str.length())
+                    if (str.charAt(i + 1) == 'U')
+                        i++;
+                    else
+                        return 0;
+                else
+                    return 0;
+
+            sb.append(c);
+        }
+
+        if (isValidPath(sb.toString(), 0, new SET<>(), col, row))
             return points;
 
         return 0;
@@ -64,10 +86,10 @@ public class BoggleSolver {
     private boolean isValidPath(String str, int s, SET<Integer> set, int col, int row) {
         if (str.length() == 0)
             return true;
+        else if (set.size() == col * row)
+            return false;
 
-        boolean hasPath = false;
         char c = str.charAt(0);
-        int b = c == 'Q' ? 2 : 1;
         SET<Integer> next = hash.get(c);
         if (next == null)
             return false;
@@ -76,7 +98,8 @@ public class BoggleSolver {
             for (int v : next) {
                 SET<Integer> newSet = new SET<>(set);
                 newSet.add(v);
-                hasPath |= isValidPath(str.substring(b), v, newSet, col, row);
+                if (isValidPath(str.substring(1), v, newSet, col, row))
+                    return true;
             }
         } else {
             for (int t : next) {
@@ -92,18 +115,19 @@ public class BoggleSolver {
                     if (!set.contains(t)) {
                         SET<Integer> newSet = new SET<>(set);
                         newSet.add(t);
-                        hasPath |= isValidPath(str.substring(b), t, newSet, col, row);
+                        if (isValidPath(str.substring(1), t, newSet, col, row))
+                            return true;
                     }
                 }
             }
         }
 
-        return hasPath;
+        return false;
     }
 
     private void createHash(BoggleBoard board, int col, int row) {
         hash = new HashMap<>();
-
+        max_length = 0;
         for (int x = 0; x < col; x++) {
             for (int y = 0; y < row; y++) {
                 int v = x + y * col;
@@ -113,6 +137,9 @@ public class BoggleSolver {
                     hash.put(c, new SET<>());
 
                 hash.get(c).add(v);
+                max_length++;
+                if (c == 'Q')
+                    max_length++;
             }
         }
     }
@@ -134,7 +161,8 @@ public class BoggleSolver {
     public static void main(String[] args) {
         String[][] test = {
                 { "board4x4.txt", "1" },
-                { "board-q.txt", "3" }
+                { "board-q.txt", "3" },
+                { "board-16q.txt", "0" }
         };
 
         String[] dict = { "SIT", "QUERIES", "EQUATION", "STATION" };
