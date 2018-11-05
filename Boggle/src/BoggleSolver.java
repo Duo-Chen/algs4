@@ -1,8 +1,6 @@
 import edu.princeton.cs.algs4.BreadthFirstDirectedPaths;
 import edu.princeton.cs.algs4.Digraph;
-import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.SET;
-import edu.princeton.cs.algs4.StdOut;
 
 import java.util.HashMap;
 
@@ -149,17 +147,22 @@ public class BoggleSolver {
     }
 
     public static void main(String[] args) {
-        In in = new In(args[0]);
-        String[] dict = in.readAllStrings();
+        String[][] test = {
+                { "board4x4.txt", "1" },
+                { "board-q.txt", "2" }
+        };
+
+        String[] dict = { "SIT", "QUERIES", "EQUATION" };
         BoggleSolver solver = new BoggleSolver(dict);
-        BoggleBoard board = new BoggleBoard(args[1]);
-        int score = 0;
-        for (String word : solver.getAllValidWords(board)) {
-            StdOut.println(word);
-            score += solver.scoreOf(word);
+
+        for (String[] str : test) {
+            BoggleBoard board = new BoggleBoard(str[0]);
+            int count = 0;
+            for (String s : solver.getAllValidWords(board))
+                count++;
+
+            if (count != Integer.parseInt(str[1]))
+                throw new IllegalArgumentException("Wrong answer with " + str[0]);
         }
-        StdOut.println("Score = " + score);
-        if (score != Integer.parseInt(args[2]))
-            throw new IllegalArgumentException("Wrong answer");
     }
 }
