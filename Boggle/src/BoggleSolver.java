@@ -1,4 +1,5 @@
 import edu.princeton.cs.algs4.SET;
+import edu.princeton.cs.algs4.StdOut;
 
 import java.util.HashMap;
 
@@ -107,7 +108,7 @@ public class BoggleSolver {
             for (int y = 0; y < row; y++) {
                 int v = x + y * col;
 
-                Character c = board.getLetter(y, x);
+                char c = board.getLetter(y, x);
                 if (!hash.containsKey(c))
                     hash.put(c, new SET<>());
 
@@ -142,8 +143,10 @@ public class BoggleSolver {
         for (String[] str : test) {
             BoggleBoard board = new BoggleBoard(str[0]);
             int count = 0;
-            for (String s : solver.getAllValidWords(board))
+            for (String s : solver.getAllValidWords(board)) {
+                StdOut.println(s);
                 count++;
+            }
 
             if (count != Integer.parseInt(str[1]))
                 throw new IllegalArgumentException("Wrong answer with " + str[0]);
