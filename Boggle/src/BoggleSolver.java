@@ -139,8 +139,10 @@ public class BoggleSolver {
                 }
             }
             if (c == '.' || c > x.c) collect(x.right, prefix, i, pattern, queue);
-        }public boolean hasPrefix(String prefix) {
-            Node prefixNode = get(root, prefix, 0);
+        }
+
+        public boolean hasPrefix(String prefix) {
+            Node<Value> prefixNode = get(root, prefix, 0);
             if (prefixNode == null)
                 return false;
             if (prefixNode.val != null)
@@ -187,7 +189,7 @@ public class BoggleSolver {
         return validStrings;
     }
 
-    public boolean[][] deepCopy(boolean[][] original) {
+    private boolean[][] deepCopy(boolean[][] original) {
         if (original == null) {
             return null;
         }
