@@ -2,12 +2,13 @@ import edu.princeton.cs.algs4.SET;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.TST;
 
-import java.util.HashMap;
+import java.util.Arrays;
+
 
 public class BoggleSolver {
     private final TST<Integer> dict;
-    private HashMap<Character, SET<Integer>> hash;
-    private int max_length;
+    private BoggleBoard board;
+    private SET<String> validStrings;
 
     public BoggleSolver(String[] dictionary) {
         if (dictionary == null)
@@ -26,20 +27,68 @@ public class BoggleSolver {
         if (board == null)
             throw new IllegalArgumentException("");
 
-        SET<String> res = new SET<>();
+        this.board = board;
+        validStrings = new SET<>();
         int col = board.cols();
         int row = board.rows();
-        createHash(board, col, row);
 
-        for (String str : dict.keys()) {
-            int points = countPoints(str, col, row);
-            if (points > 0) {
-                dict.put(str, points);
-                res.add(str);
+        for (int x = 0; x < col; x++) {
+            for (int y  = 0; y < row; y++) {
+                boolean[][] marked = new boolean[col][row];
+                findValidString(marked, x, y, new String());
             }
         }
 
-        return res;
+        return validStrings;
+    }
+
+    public boolean[][] deepCopy(boolean[][] original) {
+        if (original == null) {
+            return null;
+        }
+
+        final boolean[][] result = new boolean[original.length][];
+        for (int i = 0; i < original.length; i++) {
+            result[i] = Arrays.copyOf(original[i], original[i].length);
+        }
+        return result;
+    }
+
+    private void findValidString(boolean[][] marked, int x, int y, String str) {
+        if (marked[x][y])
+            return;
+
+        char c = board.getLetter(y, x);
+        if (c == 'Q')
+            str += "QU";
+        else
+            str += c;
+
+        if (!dict.keysWithPrefix(str).iterator().hasNext())
+            return;
+
+        if (str.length() > 2 && dict.contains(str))
+            validStrings.add(str);
+
+        boolean[][] newMarked = deepCopy(marked);
+        newMarked[x][y] = true;
+
+        if (x > 0) // left
+            findValidString(newMarked, x - 1, y, str);
+        if (x < board.cols() - 1) // right
+            findValidString(newMarked, x + 1, y, str);
+        if (y > 0) // top
+            findValidString(newMarked, x, y - 1, str);
+        if (y < board.rows() - 1) // bottom
+            findValidString(newMarked, x, y + 1, str);
+        if (x > 0 && y > 0) // top-left
+            findValidString(newMarked, x - 1, y - 1, str);
+        if (x < board.cols() - 1 && y > 0) // top-right
+            findValidString(newMarked, x + 1, y - 1, str);
+        if (x > 0 && y < board.rows() - 1) // bottom-left
+            findValidString(newMarked, x - 1, y + 1, str);
+        if (x < board.cols() - 1 && y <board.rows() - 1) // bottom-right
+            findValidString(newMarked, x + 1, y + 1, str);
     }
 
     private int length2point(int length) {
@@ -53,96 +102,6 @@ public class BoggleSolver {
             return 5;
         else
             return 11;
-    }
-
-    private int countPoints(String str, int col, int row) {
-        if (str.length() > max_length)
-            return 0;
-
-        int points = length2point(str.length());
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < str.length(); i++) {
-            char c = str.charAt(i);
-            if (!hash.containsKey(c))
-                return 0;
-
-            if (c == 'Q')
-                if (i + 1 < str.length())
-                    if (str.charAt(i + 1) == 'U')
-                        i++;
-                    else
-                        return 0;
-                else
-                    return 0;
-
-            sb.append(c);
-        }
-
-        if (isValidPath(sb.toString(), 0, new SET<>(), col, row))
-            return points;
-
-        return 0;
-    }
-
-    private boolean isValidPath(String str, int s, SET<Integer> set, int col, int row) {
-        if (str.length() == 0)
-            return true;
-        else if (set.size() == col * row)
-            return false;
-
-        char c = str.charAt(0);
-        SET<Integer> next = hash.get(c);
-        if (next == null)
-            return false;
-
-        if (set.isEmpty()) {
-            for (int v : next) {
-                SET<Integer> newSet = new SET<>(set);
-                newSet.add(v);
-                if (isValidPath(str.substring(1), v, newSet, col, row))
-                    return true;
-            }
-        } else {
-            for (int t : next) {
-                int tX = t % col;
-                int tY = t / col;
-                int sX = s % col;
-                int sY = s / col;
-                int dX = Math.abs(tX - sX);
-                int dY = Math.abs(tY - sY);
-                if ((dX == 0 && dY == 1)
-                        || (dX == 1 && dY == 0)
-                        || (dX == 1 && dY == 1)) {
-                    if (!set.contains(t)) {
-                        SET<Integer> newSet = new SET<>(set);
-                        newSet.add(t);
-                        if (isValidPath(str.substring(1), t, newSet, col, row))
-                            return true;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
-    private void createHash(BoggleBoard board, int col, int row) {
-        hash = new HashMap<>();
-        max_length = 0;
-        for (int x = 0; x < col; x++) {
-            for (int y = 0; y < row; y++) {
-                int v = x + y * col;
-
-                char c = board.getLetter(y, x);
-                if (!hash.containsKey(c))
-                    hash.put(c, new SET<>());
-
-                hash.get(c).add(v);
-                max_length++;
-                if (c == 'Q')
-                    max_length++;
-            }
-        }
     }
 
     public int scoreOf(String word) {
