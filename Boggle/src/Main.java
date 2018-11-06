@@ -28,5 +28,20 @@ public class Main {
                 throw new IllegalArgumentException("Wrong answer");
             StdOut.println();
         }
+
+        In in = new In("dictionary-yawl.txt");
+        BoggleSolver solver = new BoggleSolver(in.readAllStrings());
+        BoggleBoard board = new BoggleBoard("board-q.txt");
+        long count = 0;
+        long t = 0;
+        long s = System.currentTimeMillis();
+        do {
+            solver.getAllValidWords(board);
+            count++;
+            t = System.currentTimeMillis();
+        } while (t - s < 5000);
+
+        double callPerSecond = ((double)count) / ((double)(t - s)) * 1000.0;
+        StdOut.println(callPerSecond);
     }
 }
