@@ -1,10 +1,11 @@
 import edu.princeton.cs.algs4.SET;
 import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.TST;
 
 import java.util.HashMap;
 
 public class BoggleSolver {
-    private final HashMap<String, Integer> dict;
+    private final TST<Integer> dict;
     private HashMap<Character, SET<Integer>> hash;
     private int max_length;
 
@@ -12,12 +13,12 @@ public class BoggleSolver {
         if (dictionary == null)
             throw new IllegalArgumentException("");
 
-        dict = new HashMap<>();
+        dict = new TST<>();
         for (String str : dictionary) {
             if (str.length() < 3)
                 continue;
 
-            dict.put(str.toUpperCase(), length2point(str.length()));
+            dict.put(str, length2point(str.length()));
         }
     }
 
@@ -30,7 +31,7 @@ public class BoggleSolver {
         int row = board.rows();
         createHash(board, col, row);
 
-        for (String str : dict.keySet()) {
+        for (String str : dict.keys()) {
             int points = countPoints(str, col, row);
             if (points > 0) {
                 dict.put(str, points);
@@ -151,9 +152,8 @@ public class BoggleSolver {
         if (word.length() < 3)
             return 0;
 
-        String key = word.toUpperCase();
-        if (dict.containsKey(key))
-            return dict.get(key);
+        if (dict.contains(word))
+            return dict.get(word);
 
         return 0;
     }
