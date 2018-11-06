@@ -1,13 +1,19 @@
-import edu.princeton.cs.algs4.SET;
 import edu.princeton.cs.algs4.StdOut;
 
 import java.util.Arrays;
+import java.util.HashSet;
 
 
 public class BoggleSolver {
     private final PrefixTrieSET dict;
     private BoggleBoard board;
-    private SET<String> validStrings;
+    private HashSet<String> validStrings;
+
+    private enum ENUM_PREFIX {
+        No,
+        IsString,
+        IsPrefix,
+    }
 
     private static class PrefixTrieSET {
         private static final int R = 26;        // A - Z
@@ -24,21 +30,6 @@ public class BoggleSolver {
         public PrefixTrieSET() {
         }
 
-        public boolean contains(String key) {
-            if (key == null) throw new IllegalArgumentException("argument to contains() is null");
-            Node x = get(root, key, 0);
-            if (x == null) return false;
-            return x.isString;
-        }
-
-        private Node get(Node x, String key, int d) {
-            if (x == null) return null;
-            if (d == key.length()) return x;
-            char c = key.charAt(d);
-            int index = c - A;
-            return get(x.next[index], key, d+1);
-        }
-
         public void add(String key) {
             if (key == null) throw new IllegalArgumentException("argument to add() is null");
             root = add(root, key, 0);
@@ -48,8 +39,7 @@ public class BoggleSolver {
             if (x == null) x = new Node();
             if (d == key.length()) {
                 x.isString = true;
-            }
-            else {
+            } else {
                 char c = key.charAt(d);
                 int index = c - A;
                 x.next[index] = add(x.next[index], key, d+1);
@@ -57,17 +47,25 @@ public class BoggleSolver {
             return x;
         }
 
-        public boolean hasPrefix(String prefix) {
-            Node prefixNode = get(root, prefix, 0);
-            if (prefixNode == null)
-                return false;
-            if (prefixNode.isString)
-                return true;
-            for (int i = 0; i < R; i++)
-                if (prefixNode.next[i] != null)
-                    return true;
+        public ENUM_PREFIX hasPrefix(String prefix) {
+            Node node = root;
+            int index = 0;
+            while (prefix.length() > index) {
+                if (node == null)
+                    break;
 
-            return false;
+                node = node.next[prefix.charAt(index++) - A];
+            }
+
+            if (index != prefix.length() || node == null)
+                return ENUM_PREFIX.No;
+            if (node.isString)
+                return ENUM_PREFIX.IsString;
+            for (int i = 0; i < R; i++)
+                if (node.next[i] != null)
+                    return ENUM_PREFIX.IsPrefix;
+
+            return ENUM_PREFIX.No;
         }
     }
 
@@ -89,7 +87,7 @@ public class BoggleSolver {
             throw new IllegalArgumentException("");
 
         this.board = board;
-        validStrings = new SET<>();
+        validStrings = new HashSet<>();
         int col = board.cols();
         int row = board.rows();
 
@@ -125,11 +123,17 @@ public class BoggleSolver {
         else
             str += c;
 
-        if (!dict.hasPrefix(str))
-            return;
+        switch (dict.hasPrefix(str)) {
+            case No:
+                return;
 
-        if (str.length() > 2 && dict.contains(str))
-            validStrings.add(str);
+            case IsPrefix:
+                break;
+
+            case IsString:
+                validStrings.add(str);
+                break;
+        }
 
         boolean[][] newMarked = deepCopy(marked);
         newMarked[x][y] = true;
@@ -172,7 +176,7 @@ public class BoggleSolver {
         if (word.length() < 3)
             return 0;
 
-        if (dict.contains(word))
+        if (dict.hasPrefix(word) == ENUM_PREFIX.IsString)
             return length2point(word.length());
 
         return 0;
