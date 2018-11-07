@@ -5,10 +5,10 @@ import java.util.HashSet;
 
 public class BoggleSolver {
     private final PrefixTrieSET dict;
-    private BoggleBoard board;
+    private BoggleBoard bb;
     private HashSet<String> validStrings;
 
-    private enum ENUM_PREFIX {
+    private enum EnumPrefix {
         No,
         IsString,
         IsPrefix,
@@ -46,7 +46,7 @@ public class BoggleSolver {
             return x;
         }
 
-        public ENUM_PREFIX hasPrefix(String prefix) {
+        public EnumPrefix hasPrefix(String prefix) {
             Node node = root;
             int index = 0;
             while (prefix.length() > index) {
@@ -57,14 +57,14 @@ public class BoggleSolver {
             }
 
             if (index != prefix.length() || node == null)
-                return ENUM_PREFIX.No;
+                return EnumPrefix.No;
             if (node.isString)
-                return ENUM_PREFIX.IsString;
+                return EnumPrefix.IsString;
             for (int i = 0; i < R; i++)
                 if (node.next[i] != null)
-                    return ENUM_PREFIX.IsPrefix;
+                    return EnumPrefix.IsPrefix;
 
-            return ENUM_PREFIX.No;
+            return EnumPrefix.No;
         }
     }
 
@@ -85,7 +85,7 @@ public class BoggleSolver {
         if (board == null)
             throw new IllegalArgumentException("");
 
-        this.board = board;
+        bb = board;
         validStrings = new HashSet<>();
         int col = board.cols();
         int row = board.rows();
@@ -104,7 +104,7 @@ public class BoggleSolver {
         if (marked[x][y])
             return;
 
-        char c = board.getLetter(y, x);
+        char c = bb.getLetter(y, x);
         if (c == 'Q')
             str += "QU";
         else
@@ -126,19 +126,19 @@ public class BoggleSolver {
 
         if (x > 0) // left
             findValidString(marked, x - 1, y, str);
-        if (x < board.cols() - 1) // right
+        if (x < bb.cols() - 1) // right
             findValidString(marked, x + 1, y, str);
         if (y > 0) // top
             findValidString(marked, x, y - 1, str);
-        if (y < board.rows() - 1) // bottom
+        if (y < bb.rows() - 1) // bottom
             findValidString(marked, x, y + 1, str);
         if (x > 0 && y > 0) // top-left
             findValidString(marked, x - 1, y - 1, str);
-        if (x < board.cols() - 1 && y > 0) // top-right
+        if (x < bb.cols() - 1 && y > 0) // top-right
             findValidString(marked, x + 1, y - 1, str);
-        if (x > 0 && y < board.rows() - 1) // bottom-left
+        if (x > 0 && y < bb.rows() - 1) // bottom-left
             findValidString(marked, x - 1, y + 1, str);
-        if (x < board.cols() - 1 && y <board.rows() - 1) // bottom-right
+        if (x < bb.cols() - 1 && y < bb.rows() - 1) // bottom-right
             findValidString(marked, x + 1, y + 1, str);
 
         marked[x][y] = false;
@@ -164,7 +164,7 @@ public class BoggleSolver {
         if (word.length() < 3)
             return 0;
 
-        if (dict.hasPrefix(word) == ENUM_PREFIX.IsString)
+        if (dict.hasPrefix(word) == EnumPrefix.IsString)
             return length2point(word.length());
 
         return 0;
