@@ -24,6 +24,7 @@ public class BoggleSolver {
         private static class Node {
             private Node[] next = new Node[R];
             private boolean isString;
+            private boolean isEmpty = true;
         }
 
         public PrefixTrieSET() {
@@ -42,6 +43,7 @@ public class BoggleSolver {
                 char c = key.charAt(d);
                 int index = c - A;
                 x.next[index] = add(x.next[index], key, d+1);
+                x.isEmpty = false;
             }
             return x;
         }
@@ -60,9 +62,8 @@ public class BoggleSolver {
                 return EnumPrefix.No;
             if (node.isString)
                 return EnumPrefix.IsString;
-            for (int i = 0; i < R; i++)
-                if (node.next[i] != null)
-                    return EnumPrefix.IsPrefix;
+            if (!node.isEmpty)
+                return EnumPrefix.IsPrefix;
 
             return EnumPrefix.No;
         }
