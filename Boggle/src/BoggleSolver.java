@@ -101,18 +101,6 @@ public class BoggleSolver {
         return validStrings;
     }
 
-    private boolean[][] deepCopy(boolean[][] original) {
-        if (original == null) {
-            return null;
-        }
-
-        final boolean[][] result = new boolean[original.length][];
-        for (int i = 0; i < original.length; i++) {
-            result[i] = Arrays.copyOf(original[i], original[i].length);
-        }
-        return result;
-    }
-
     private void findValidString(boolean[][] marked, int x, int y, String str) {
         if (marked[x][y])
             return;
@@ -135,25 +123,26 @@ public class BoggleSolver {
                 break;
         }
 
-        boolean[][] newMarked = deepCopy(marked);
-        newMarked[x][y] = true;
+        marked[x][y] = true;
 
         if (x > 0) // left
-            findValidString(newMarked, x - 1, y, str);
+            findValidString(marked, x - 1, y, str);
         if (x < board.cols() - 1) // right
-            findValidString(newMarked, x + 1, y, str);
+            findValidString(marked, x + 1, y, str);
         if (y > 0) // top
-            findValidString(newMarked, x, y - 1, str);
+            findValidString(marked, x, y - 1, str);
         if (y < board.rows() - 1) // bottom
-            findValidString(newMarked, x, y + 1, str);
+            findValidString(marked, x, y + 1, str);
         if (x > 0 && y > 0) // top-left
-            findValidString(newMarked, x - 1, y - 1, str);
+            findValidString(marked, x - 1, y - 1, str);
         if (x < board.cols() - 1 && y > 0) // top-right
-            findValidString(newMarked, x + 1, y - 1, str);
+            findValidString(marked, x + 1, y - 1, str);
         if (x > 0 && y < board.rows() - 1) // bottom-left
-            findValidString(newMarked, x - 1, y + 1, str);
+            findValidString(marked, x - 1, y + 1, str);
         if (x < board.cols() - 1 && y <board.rows() - 1) // bottom-right
-            findValidString(newMarked, x + 1, y + 1, str);
+            findValidString(marked, x + 1, y + 1, str);
+
+        marked[x][y] = false;
     }
 
     private int length2point(int length) {
