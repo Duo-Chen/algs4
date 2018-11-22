@@ -12,6 +12,23 @@ public class MoveToFront {
     // if args[0] is '-', apply move-to-front encoding
     // if args[0] is '+', apply move-to-front decoding
     public static void main(String[] args) {
-        throw new IllegalArgumentException("not implemented");
+        if (args == null)
+            throw new IllegalArgumentException("");
+
+        if (args.length < 1)
+            throw new IllegalArgumentException("");
+
+        switch (args[0].charAt(0)) {
+            case '+':
+                decode();
+                break;
+
+            case '-':
+                encode();
+                break;
+
+            default:
+                throw new IllegalArgumentException("");
+        }
     }
 }
