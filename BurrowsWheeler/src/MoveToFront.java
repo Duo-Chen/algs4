@@ -21,7 +21,7 @@ public class MoveToFront {
             if (codeMap[i] == c)
                 return i;
 
-        for (int i = Math.max(num, index - num); i < Math.min(ASCII_SIZE, index + num); i++)
+        for (int i = Math.max(num, index - num); i < Math.min(ASCII_SIZE, index + num + 1); i++)
             if (codeMap[i] == c)
                 return i;
 
@@ -53,7 +53,7 @@ public class MoveToFront {
 
         while (!BinaryStdIn.isEmpty()) {
             char c = BinaryStdIn.readChar();
-            BinaryStdOut.write(move2Front(codeMap, num, c) + " ");
+            BinaryStdOut.write(String.format("%02X", move2Front(codeMap, num, c)) + " ");
             num++;
         }
 
