@@ -53,7 +53,7 @@ public class MoveToFront {
 
         while (!BinaryStdIn.isEmpty()) {
             char c = BinaryStdIn.readChar();
-            BinaryStdOut.write(String.format("%02X", move2Front(codeMap, num, c)) + " ");
+            BinaryStdOut.write((char) move2Front(codeMap, num, c));
             num++;
         }
 

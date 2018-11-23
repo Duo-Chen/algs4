@@ -8,17 +8,22 @@ public class BurrowsWheeler {
     public static void transform() {
         String s = BinaryStdIn.readString();
         CircularSuffixArray csa = new CircularSuffixArray(s);
-        StringBuilder sb = new StringBuilder();
         int index = -1;
         for (int i = 0; i < csa.length(); i++) {
             int x = csa.index(i);
-            sb.append(s.charAt(x > 0 ? x - 1 : csa.length() - 1));
-            if (x == 0)
+            if (x == 0) {
                 index = i;
+                break;
+            }
         }
 
         BinaryStdOut.write(index);
-        BinaryStdOut.write(sb.toString());
+
+        for (int i = 0; i < csa.length(); i++) {
+            int x = csa.index(i);
+            BinaryStdOut.write(s.charAt(x > 0 ? x - 1 : csa.length() - 1));
+        }
+
         BinaryStdOut.close();
     }
 
@@ -43,14 +48,12 @@ public class BurrowsWheeler {
             }
         }
 
-        StringBuilder sb = new StringBuilder();
         int p = index;
         do {
-            sb.append(chars[p]);
+            BinaryStdOut.write(chars[p]);
             p = next[p];
         } while (p != index);
 
-        BinaryStdOut.write(sb.toString());
         BinaryStdOut.close();
     }
 
