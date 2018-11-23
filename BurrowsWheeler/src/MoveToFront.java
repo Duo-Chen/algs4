@@ -1,5 +1,5 @@
 import edu.princeton.cs.algs4.BinaryStdIn;
-import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.BinaryStdOut;
 
 public class MoveToFront {
     private static final int ASCII_SIZE = 256;
@@ -53,9 +53,11 @@ public class MoveToFront {
 
         while (!BinaryStdIn.isEmpty()) {
             char c = BinaryStdIn.readChar();
-            StdOut.print(move2Front(codeMap, num, c) + " ");
+            BinaryStdOut.write(move2Front(codeMap, num, c) + " ");
             num++;
         }
+
+        BinaryStdOut.close();
     }
 
     // apply move-to-front decoding, reading from standard input and writing to standard output
@@ -64,9 +66,11 @@ public class MoveToFront {
 
         while (!BinaryStdIn.isEmpty()) {
             char c = BinaryStdIn.readChar();
-            StdOut.print((char) codeMap[c]);
+            BinaryStdOut.write((char) codeMap[c]);
             shift(codeMap, c);
         }
+
+        BinaryStdOut.close();
     }
 
     // if args[0] is '-', apply move-to-front encoding

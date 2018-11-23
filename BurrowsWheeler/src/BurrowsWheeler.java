@@ -1,5 +1,5 @@
 import edu.princeton.cs.algs4.BinaryStdIn;
-import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.BinaryStdOut;
 
 import java.util.Arrays;
 
@@ -17,8 +17,9 @@ public class BurrowsWheeler {
                 index = i;
         }
 
-        StdOut.println(index);
-        StdOut.println(sb.toString());
+        BinaryStdOut.write(index);
+        BinaryStdOut.write(sb.toString());
+        BinaryStdOut.close();
     }
 
     // apply Burrows-Wheeler inverse transform, reading from standard input and writing to standard output
@@ -49,7 +50,8 @@ public class BurrowsWheeler {
             p = next[p];
         } while (p != index);
 
-        StdOut.println(sb.toString());
+        BinaryStdOut.write(sb.toString());
+        BinaryStdOut.close();
     }
 
     // if args[0] is '-', apply Burrows-Wheeler transform
