@@ -8,17 +8,17 @@ public class BurrowsWheeler {
     public static void transform() {
         String s = BinaryStdIn.readString();
         CircularSuffixArray csa = new CircularSuffixArray(s);
-        String str = new String();
+        StringBuilder sb = new StringBuilder();
         int index = -1;
         for (int i = 0; i < csa.length(); i++) {
             int x = csa.index(i);
-            str += s.charAt(x > 0 ? x - 1 : csa.length() - 1);
+            sb.append(s.charAt(x > 0 ? x - 1 : csa.length() - 1));
             if (x == 0)
                 index = i;
         }
 
         StdOut.println(index);
-        StdOut.println(str);
+        StdOut.println(sb.toString());
     }
 
     // apply Burrows-Wheeler inverse transform, reading from standard input and writing to standard output
@@ -42,14 +42,14 @@ public class BurrowsWheeler {
             }
         }
 
-        String res = new String();
+        StringBuilder sb = new StringBuilder();
         int p = index;
         do {
-            res += chars[p];
+            sb.append(chars[p]);
             p = next[p];
         } while (p != index);
 
-        StdOut.println(res);
+        StdOut.println(sb.toString());
     }
 
     // if args[0] is '-', apply Burrows-Wheeler transform

@@ -64,7 +64,7 @@ public class MoveToFront {
 
         while (!BinaryStdIn.isEmpty()) {
             char c = BinaryStdIn.readChar();
-            StdOut.print((char)codeMap[c]);
+            StdOut.print((char) codeMap[c]);
             shift(codeMap, c);
         }
     }
