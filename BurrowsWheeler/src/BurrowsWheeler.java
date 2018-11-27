@@ -1,9 +1,9 @@
 import edu.princeton.cs.algs4.BinaryStdIn;
 import edu.princeton.cs.algs4.BinaryStdOut;
 
-import java.util.Arrays;
-
 public class BurrowsWheeler {
+    private final static int R = 256;
+
     // apply Burrows-Wheeler transform, reading from standard input and writing to standard output
     public static void transform() {
         String s = BinaryStdIn.readString();
@@ -31,11 +31,18 @@ public class BurrowsWheeler {
     public static void inverseTransform() {
         int index = BinaryStdIn.readInt();
         String s = BinaryStdIn.readString();
-
-        char[] chars = s.toCharArray();
-        Arrays.sort(chars);
-
         int num = s.length();
+
+        char[] chars = new char[s.length()];
+        int[] count = new int[R];
+        for (int i = 0; i < num; i++)
+            count[s.charAt(i)]++;
+
+        int d = 0;
+        for (int i = 0; i < R; i++)
+            while (count[i]-- > 0)
+                chars[d++] = (char)i;
+
         int[] next = new int[num];
         boolean[] t = new boolean[num];
         for (int i = 0; i < num; i++) {
