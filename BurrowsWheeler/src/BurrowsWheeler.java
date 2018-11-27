@@ -59,10 +59,10 @@ public class BurrowsWheeler {
         }
 
         int p = index;
-        do {
+        for (int i = 0; i < num; i++) {
             BinaryStdOut.write(chars[p]);
             p = next[p];
-        } while (p != index);
+        }
 
         BinaryStdOut.close();
     }
