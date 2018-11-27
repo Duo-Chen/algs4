@@ -2,11 +2,11 @@ import edu.princeton.cs.algs4.BinaryStdIn;
 import edu.princeton.cs.algs4.BinaryStdOut;
 
 public class MoveToFront {
-    private static final int ASCII_SIZE = 256;
+    private static final int R = 256;
 
     private static int[] createCodeMap() {
-        int[] res = new int[ASCII_SIZE];
-        for (int i = 0; i < ASCII_SIZE; i++)
+        int[] res = new int[R];
+        for (int i = 0; i < R; i++)
             res[i] = i;
 
         return res;
@@ -21,7 +21,7 @@ public class MoveToFront {
             if (codeMap[i] == c)
                 return i;
 
-        for (int i = Math.max(num, index - num); i < Math.min(ASCII_SIZE, index + num + 1); i++)
+        for (int i = Math.max(num, index - num); i < Math.min(R, index + num + 1); i++)
             if (codeMap[i] == c)
                 return i;
 
