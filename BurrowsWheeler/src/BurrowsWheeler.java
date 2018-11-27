@@ -1,6 +1,8 @@
 import edu.princeton.cs.algs4.BinaryStdIn;
 import edu.princeton.cs.algs4.BinaryStdOut;
 
+import java.util.Arrays;
+
 public class BurrowsWheeler {
     private static final int R = 256;
 
@@ -33,34 +35,22 @@ public class BurrowsWheeler {
         String s = BinaryStdIn.readString();
         int num = s.length();
 
-        char[] chars = new char[s.length()];
-        int[] count = new int[R];
+        Integer[] next = new Integer[num];
         for (int i = 0; i < num; i++)
-            count[s.charAt(i)]++;
+            next[i] = i;
 
-        int d = 0;
-        for (int i = 0; i < R; i++) {
-            while (count[i] > 0) {
-                chars[d++] = (char) i;
-                count[i]--;
-            }
-        }
+        Arrays.sort(next, (Integer i, Integer j) -> {
+            if (s.charAt(i) > s.charAt(j))
+                return 1;
+            else if (s.charAt(i) < s.charAt(j))
+                return -1;
 
-        int[] next = new int[num];
-        boolean[] t = new boolean[num];
-        for (int i = 0; i < num; i++) {
-            for (int j = 0; j < num; j++) {
-                if (!t[j] && s.charAt(j) == chars[i]) {
-                    next[i] = j;
-                    t[j] = true;
-                    break;
-                }
-            }
-        }
+            return 0;
+        });
 
         int p = index;
         for (int i = 0; i < num; i++) {
-            BinaryStdOut.write(chars[p]);
+            BinaryStdOut.write(s.charAt(next[p]));
             p = next[p];
         }
 
