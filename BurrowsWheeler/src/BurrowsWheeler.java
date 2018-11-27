@@ -2,7 +2,7 @@ import edu.princeton.cs.algs4.BinaryStdIn;
 import edu.princeton.cs.algs4.BinaryStdOut;
 
 public class BurrowsWheeler {
-    private final static int R = 256;
+    private static final int R = 256;
 
     // apply Burrows-Wheeler transform, reading from standard input and writing to standard output
     public static void transform() {
@@ -39,9 +39,12 @@ public class BurrowsWheeler {
             count[s.charAt(i)]++;
 
         int d = 0;
-        for (int i = 0; i < R; i++)
-            while (count[i]-- > 0)
-                chars[d++] = (char)i;
+        for (int i = 0; i < R; i++) {
+            while (count[i] > 0) {
+                chars[d++] = (char) i;
+                count[i]--;
+            }
+        }
 
         int[] next = new int[num];
         boolean[] t = new boolean[num];

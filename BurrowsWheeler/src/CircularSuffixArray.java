@@ -1,8 +1,9 @@
-import java.util.TreeMap;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class CircularSuffixArray {
     private final int len;
-    private final int[] indices;
+    private final Integer[] indices;
 
     // circular suffix array of s
     public CircularSuffixArray(String s) {
@@ -10,17 +11,30 @@ public class CircularSuffixArray {
             throw new IllegalArgumentException("");
 
         len = s.length();
-        indices = new int[len];
-        TreeMap<String, Integer> set = new TreeMap<>();
-        for (int i = 0; i < len; i++) {
-            String buff = s.substring(i) + s.substring(0, i);
-            set.put(buff, i);
-        }
+        indices = new Integer[len];
+        for (int i = 0; i < len; i++)
+            indices[i] = i;
 
-        int index = 0;
-        for (String key : set.keySet()) {
-            indices[index++] = set.get(key);
-        }
+        Arrays.sort(indices, (Integer first, Integer second) -> {
+            int firstIndex = first;
+            int secondIndex = second;
+            for (int i = 0; i < len; i++) {
+                if (firstIndex > len - 1)
+                    firstIndex = 0;
+                if (secondIndex > len - 1)
+                    secondIndex = 0;
+
+                if (s.charAt(firstIndex) < s.charAt(secondIndex))
+                    return -1;
+                else if (s.charAt(firstIndex) > s.charAt(secondIndex))
+                    return 1;
+
+                firstIndex++;
+                secondIndex++;
+            }
+
+            return 0;
+        });
     }
 
     // length of s
